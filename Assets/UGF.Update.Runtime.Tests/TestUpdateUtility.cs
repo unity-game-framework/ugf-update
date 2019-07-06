@@ -15,46 +15,200 @@ namespace UGF.Update.Runtime.Tests
         }
 
         [Test]
-        public void TryAddUpdateFunction()
+        public void SetupPlayer()
         {
-            Assert.Ignore();
+            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            var target = new Target();
+            Type[] path = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
+
+            UpdateUtility.TryAddUpdateFunction(playerLoop, path, target.Update);
+
+            PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
         [Test]
-        public void TrySetPlayerLoopSystem()
+        public void TryAddUpdateFunction()
         {
-            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
-            Type[] path0 = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
-            Type[] path1 = { typeof(PlayerLoops.Update), typeof(Target) };
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem { type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
 
-            bool result0 = UpdateUtility.TryGetPlayerLoopSystem(playerLoop, path0, out PlayerLoopSystem playerLoopSystem0);
+            var target = new Target();
+            PlayerLoopSystem.UpdateFunction function = target.Update;
+            Type[] path = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
+
+            bool result0 = UpdateUtility.TryAddUpdateFunction(playerLoop, path, function);
 
             Assert.True(result0);
-            Assert.AreEqual(typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), playerLoopSystem0.type);
 
-            playerLoopSystem0.type = typeof(Target);
+            Delegate[] invocations = playerLoop.subSystemList[1].subSystemList[0].updateDelegate.GetInvocationList();
 
-            bool result1 = UpdateUtility.TrySetPlayerLoopSystem(playerLoop, path0, playerLoopSystem0);
+            Assert.Contains(function, invocations);
 
-            Assert.True(result1);
-
-            bool result2 = UpdateUtility.TryGetPlayerLoopSystem(playerLoop, path1, out PlayerLoopSystem playerLoopSystem1);
-
-            Assert.True(result2);
-            Assert.AreEqual(typeof(Target), playerLoopSystem1.type);
             Assert.Pass(playerLoop.Print());
         }
 
         [Test]
-        public void TryGetPlayerLoopSystem()
+        public void TryRemoveUpdateFunction()
         {
-            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem { type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            var target = new Target();
+            PlayerLoopSystem.UpdateFunction function = target.Update;
             Type[] path = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
 
-            bool result = UpdateUtility.TryGetPlayerLoopSystem(playerLoop, path, out PlayerLoopSystem playerLoopSystem);
+            playerLoop.subSystemList[1].subSystemList[0].updateDelegate += function;
 
-            Assert.True(result);
-            Assert.AreEqual(typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), playerLoopSystem.type);
+            bool result0 = UpdateUtility.TryRemoveUpdateFunction(playerLoop, path, function);
+
+            Assert.True(result0);
+            Assert.Null(playerLoop.subSystemList[1].subSystemList[0].updateDelegate);
+            Assert.Pass(playerLoop.Print());
+        }
+
+        [Test]
+        public void TryAddSubSystem()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem { type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            Type[] path = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
+
+            bool result0 = UpdateUtility.TryAddSubSystem(playerLoop, path, typeof(PlayerLoops.FixedUpdate), 0);
+
+            Assert.True(result0);
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList[1].subSystemList[0].subSystemList;
+
+            Assert.NotNull(subSystems);
+            Assert.AreEqual(1, subSystems.Length);
+            Assert.AreEqual(typeof(PlayerLoops.FixedUpdate), subSystems[0].type);
+            Assert.Pass(playerLoop.Print());
+        }
+
+        [Test]
+        public void TryRemoveSubSystem()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem
+                            {
+                                type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate),
+                                subSystemList = new[]
+                                {
+                                    new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) }
+                                }
+                            }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            Type[] path = { typeof(PlayerLoops.Update), typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) };
+
+            bool result0 = UpdateUtility.TryRemoveSubSystem(playerLoop, path, 0);
+
+            Assert.True(result0);
+            Assert.Null(playerLoop.subSystemList[1].subSystemList[0].subSystemList);
+            Assert.Pass(playerLoop.Print());
+        }
+
+        [Test]
+        public void AddSubSystem()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.Update) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            UpdateUtility.AddSubSystem(ref playerLoop, typeof(PlayerLoops.FixedUpdate), 1);
+
+            Assert.AreEqual(4, playerLoop.subSystemList.Length);
+            Assert.AreEqual(typeof(PlayerLoops.PreUpdate), playerLoop.subSystemList[0].type);
+            Assert.AreEqual(typeof(PlayerLoops.FixedUpdate), playerLoop.subSystemList[1].type);
+            Assert.AreEqual(typeof(PlayerLoops.Update), playerLoop.subSystemList[2].type);
+            Assert.AreEqual(typeof(PlayerLoops.PostLateUpdate), playerLoop.subSystemList[3].type);
+            Assert.Pass(playerLoop.Print());
+        }
+
+        [Test]
+        public void RemoveSubSystem()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.Update) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            UpdateUtility.RemoveSubSystem(ref playerLoop, 1);
+
+            Assert.AreEqual(3, playerLoop.subSystemList.Length);
+            Assert.AreEqual(typeof(PlayerLoops.PreUpdate), playerLoop.subSystemList[0].type);
+            Assert.AreEqual(typeof(PlayerLoops.Update), playerLoop.subSystemList[1].type);
+            Assert.AreEqual(typeof(PlayerLoops.PostLateUpdate), playerLoop.subSystemList[2].type);
+            Assert.Pass(playerLoop.Print());
         }
 
         [Test]
