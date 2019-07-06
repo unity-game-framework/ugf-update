@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,24 +8,108 @@ namespace UGF.Update.Runtime
 {
     public static class UpdateUtility
     {
-        public static bool TryAddUpdateFunction(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, PlayerLoopSystem.UpdateFunction updateFunction)
+        public static bool TryAddUpdateFunction(PlayerLoopSystem playerLoop, Type subSystemType, PlayerLoopSystem.UpdateFunction updateFunction)
         {
-            return InternalTryChangeUpdateFunction(playerLoop, path, updateFunction, 0, true);
+            return InternalTryChangeUpdateFunction(playerLoop, subSystemType, updateFunction, true);
         }
 
-        public static bool TryRemoveUpdateFunction(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, PlayerLoopSystem.UpdateFunction updateFunction)
+        public static bool TryRemoveUpdateFunction(PlayerLoopSystem playerLoop, Type subSystemType, PlayerLoopSystem.UpdateFunction updateFunction)
         {
-            return InternalTryChangeUpdateFunction(playerLoop, path, updateFunction, 0, false);
+            return InternalTryChangeUpdateFunction(playerLoop, subSystemType, updateFunction, false);
         }
 
-        public static bool TryAddSubSystem(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, Type subSystemType, int index)
+        public static bool ContainsSubSystem(PlayerLoopSystem playerLoop, Type subSystemType)
         {
-            return InternalTryChangeSubSystem(playerLoop, path, subSystemType, index, 0, true);
+            return false;
         }
 
-        public static bool TryRemoveSubSystem(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, int index)
+        public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, Type targetSubSystemType, UpdateSubSystemInsertion insertion)
         {
-            return InternalTryChangeSubSystem(playerLoop, path, null, index, 0, false);
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
+            if (targetSubSystemType == null) throw new ArgumentNullException(nameof(targetSubSystemType));
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
+
+            if (subSystems != null)
+            {
+                for (int i = 0; i < subSystems.Length; i++)
+                {
+                    PlayerLoopSystem subSystem = subSystems[i];
+
+                    if (subSystem.type != null && subSystem.type == targetSubSystemType)
+                    {
+                        switch (insertion)
+                        {
+                            case UpdateSubSystemInsertion.Before:
+                            {
+                                AddSubSystem(ref playerLoop, subSystemType, i);
+                                break;
+                            }
+                            case UpdateSubSystemInsertion.After:
+                            {
+                                AddSubSystem(ref playerLoop, subSystemType, i + 1);
+                                break;
+                            }
+                            case UpdateSubSystemInsertion.InsideTop:
+                            {
+                                AddSubSystem(ref subSystem, subSystemType, 0);
+
+                                subSystems[i] = subSystem;
+                                break;
+                            }
+                            case UpdateSubSystemInsertion.InsideBottom:
+                            {
+                                int index = subSystem.subSystemList?.Length ?? 0;
+
+                                AddSubSystem(ref subSystem, subSystemType, index);
+
+                                subSystems[i] = subSystem;
+                                break;
+                            }
+                            default: throw new ArgumentOutOfRangeException(nameof(insertion), insertion, "Unknown insertion.");
+                        }
+
+                        return true;
+                    }
+
+                    if (TryAddSubSystem(ref subSystem, subSystemType, targetSubSystemType, insertion))
+                    {
+                        subSystems[i] = subSystem;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryRemoveSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType)
+        {
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
+
+            if (subSystems != null)
+            {
+                for (int i = 0; i < subSystems.Length; i++)
+                {
+                    PlayerLoopSystem subSystem = subSystems[i];
+
+                    if (subSystem.type != null && subSystem.type == subSystemType)
+                    {
+                        RemoveSubSystem(ref playerLoop, i);
+                        return true;
+                    }
+
+                    if (TryRemoveSubSystem(ref subSystem, subSystemType))
+                    {
+                        subSystems[i] = subSystem;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, int index)
@@ -59,7 +142,7 @@ namespace UGF.Update.Runtime
         {
             if (index < 0) throw new ArgumentException("The specified index less than zero.");
             if (playerLoop.subSystemList == null) throw new ArgumentException("The specified player loop does not contains any subsystems.");
-            if (index > playerLoop.subSystemList.Length) throw new ArgumentException("The specified index more than length of the subsystems.");
+            if (index >= playerLoop.subSystemList.Length) throw new ArgumentException("The specified index more than length of the subsystems.");
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 
@@ -100,22 +183,6 @@ namespace UGF.Update.Runtime
             builder.Append(string.Concat(Enumerable.Repeat(indent, depth)));
             builder.Append(name);
             builder.AppendLine();
-
-            if (playerLoop.updateFunction != IntPtr.Zero)
-            {
-                builder.Append(string.Concat(Enumerable.Repeat(indent, depth + 1)));
-                builder.Append("updateFunction: ");
-                builder.Append(playerLoop.updateFunction.ToString());
-                builder.AppendLine();
-            }
-
-            if (playerLoop.loopConditionFunction != IntPtr.Zero)
-            {
-                builder.Append(string.Concat(Enumerable.Repeat(indent, depth + 1)));
-                builder.Append("loopConditionFunction: ");
-                builder.Append(playerLoop.loopConditionFunction.ToString());
-                builder.AppendLine();
-            }
 
             if (playerLoop.updateDelegate != null)
             {
@@ -166,31 +233,21 @@ namespace UGF.Update.Runtime
             }
         }
 
-        private static bool InternalTryChangeUpdateFunction(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, PlayerLoopSystem.UpdateFunction updateFunction, int pathIndex, bool isAdding)
+        private static bool InternalTryChangeUpdateFunction(PlayerLoopSystem playerLoop, Type subSystemType, PlayerLoopSystem.UpdateFunction updateFunction, bool isAdding)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            if (path.Count == 0) throw new InvalidOperationException("The specified path is empty.");
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (updateFunction == null) throw new ArgumentNullException(nameof(updateFunction));
-            if (pathIndex < 0) throw new ArgumentException("The specified path index less than zero.");
-            if (pathIndex >= path.Count) throw new ArgumentException("The specified path index more or equal than path count.");
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 
             if (subSystems != null)
             {
-                Type type = path[pathIndex];
-
                 for (int i = 0; i < subSystems.Length; i++)
                 {
                     PlayerLoopSystem subSystem = subSystems[i];
 
-                    if (subSystem.type != null && subSystem.type == type)
+                    if (subSystem.type != null && subSystem.type == subSystemType)
                     {
-                        if (pathIndex == path.Count - 2)
-                        {
-                            return InternalTryChangeUpdateFunction(subSystem, path, updateFunction, pathIndex + 1, isAdding);
-                        }
-
                         if (isAdding)
                         {
                             subSystem.updateDelegate += updateFunction;
@@ -203,47 +260,9 @@ namespace UGF.Update.Runtime
                         subSystems[i] = subSystem;
                         return true;
                     }
-                }
-            }
 
-            return false;
-        }
-
-        private static bool InternalTryChangeSubSystem(PlayerLoopSystem playerLoop, IReadOnlyList<Type> path, Type subSystemType, int index, int pathIndex, bool isAdding)
-        {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            if (path.Count == 0) throw new InvalidOperationException("The specified path is empty.");
-            if (isAdding && subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
-            if (pathIndex < 0) throw new ArgumentException("The specified path index less than zero.");
-            if (pathIndex >= path.Count) throw new ArgumentException("The specified path index more or equal than path count.");
-
-            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
-
-            if (subSystems != null)
-            {
-                Type type = path[pathIndex];
-
-                for (int i = 0; i < subSystems.Length; i++)
-                {
-                    PlayerLoopSystem subSystem = subSystems[i];
-
-                    if (subSystem.type != null && subSystem.type == type)
+                    if (InternalTryChangeUpdateFunction(subSystem, subSystemType, updateFunction, isAdding))
                     {
-                        if (pathIndex == path.Count - 2)
-                        {
-                            return InternalTryChangeSubSystem(subSystem, path, subSystemType, index, pathIndex + 1, isAdding);
-                        }
-
-                        if (isAdding)
-                        {
-                            AddSubSystem(ref subSystem, subSystemType, index);
-                        }
-                        else
-                        {
-                            RemoveSubSystem(ref subSystem, index);
-                        }
-
-                        subSystems[i] = subSystem;
                         return true;
                     }
                 }
