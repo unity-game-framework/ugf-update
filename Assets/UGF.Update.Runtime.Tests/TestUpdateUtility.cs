@@ -95,7 +95,26 @@ namespace UGF.Update.Runtime.Tests
         [Test]
         public void ContainsSubSystem()
         {
-            Assert.Ignore();
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem { type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate) }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            bool result = UpdateUtility.ContainsSubSystem(playerLoop, typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate));
+
+            Assert.True(result);
         }
 
         [Test]

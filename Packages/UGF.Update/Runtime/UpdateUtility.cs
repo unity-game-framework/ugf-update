@@ -20,6 +20,28 @@ namespace UGF.Update.Runtime
 
         public static bool ContainsSubSystem(PlayerLoopSystem playerLoop, Type subSystemType)
         {
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
+
+            if (subSystems != null)
+            {
+                for (int i = 0; i < subSystems.Length; i++)
+                {
+                    PlayerLoopSystem subSystem = subSystems[i];
+
+                    if (subSystem.type != null && subSystem.type == subSystemType)
+                    {
+                        return true;
+                    }
+
+                    if (ContainsSubSystem(subSystem, subSystemType))
+                    {
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
 
