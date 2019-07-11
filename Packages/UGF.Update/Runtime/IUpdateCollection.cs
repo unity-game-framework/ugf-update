@@ -8,10 +8,12 @@ namespace UGF.Update.Runtime
         Type HandlerType { get; }
         int Count { get; }
         bool AnyQueued { get; }
+        int QueueAddCount { get; }
+        int QueueRemoveCount { get; }
 
         void Update();
-        void ApplyQueue();
-        void ApplyQueueAndUpdate();
+        bool ApplyQueue();
+        bool ApplyQueueAndUpdate();
         void ClearQueue();
         void Clear();
     }
