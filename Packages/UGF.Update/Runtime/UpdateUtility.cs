@@ -6,18 +6,38 @@ using UnityEngine.Experimental.LowLevel;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Provides utilities to work with updates.
+    /// </summary>
     public static class UpdateUtility
     {
+        /// <summary>
+        /// Tries to add the specified update function into a found subsystem of the specified type from the player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to add into.</param>
+        /// <param name="subSystemType">The type of the subsystem to find.</param>
+        /// <param name="updateFunction">The update function to add.</param>
         public static bool TryAddUpdateFunction(PlayerLoopSystem playerLoop, Type subSystemType, PlayerLoopSystem.UpdateFunction updateFunction)
         {
             return InternalTryChangeUpdateFunction(playerLoop, subSystemType, updateFunction, true);
         }
 
+        /// <summary>
+        /// Tries to remove the specified update function from a found subsystem of the specified type from the player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to remove from.</param>
+        /// <param name="subSystemType">The type of the subsystem to find.</param>
+        /// <param name="updateFunction">The update function to remove.</param>
         public static bool TryRemoveUpdateFunction(PlayerLoopSystem playerLoop, Type subSystemType, PlayerLoopSystem.UpdateFunction updateFunction)
         {
             return InternalTryChangeUpdateFunction(playerLoop, subSystemType, updateFunction, false);
         }
 
+        /// <summary>
+        /// Determines whether the specified player loop system contains any subsystems with the specified type.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to check.</param>
+        /// <param name="subSystemType">The type of the subsystem.</param>
         public static bool ContainsSubSystem(PlayerLoopSystem playerLoop, Type subSystemType)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
@@ -45,6 +65,13 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Tries to add a subsystem with the specified type, targeting to a subsystem with the specified type and use specified insertion mode.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to change.</param>
+        /// <param name="subSystemType">The type of the new subsystem.</param>
+        /// <param name="targetSubSystemType">The type of the subsystem to find.</param>
+        /// <param name="insertion">The insertion mode used to create new subsystem relative to found target subsystem.</param>
         public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, Type targetSubSystemType, UpdateSubSystemInsertion insertion)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
@@ -105,6 +132,11 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Tries to remove a subsystem with the specified type from the specified player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to change.</param>
+        /// <param name="subSystemType">The type of the subsystem to remove.</param>
         public static bool TryRemoveSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
@@ -134,6 +166,12 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Adds subsystem with the specified type at the specified index into player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to change.</param>
+        /// <param name="subSystemType">The type of the subsystem to add.</param>
+        /// <param name="index">The index of the subsystem.</param>
         public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, int index)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
@@ -160,6 +198,11 @@ namespace UGF.Update.Runtime
             }
         }
 
+        /// <summary>
+        /// Removes subsystem a the specified index from the player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system.</param>
+        /// <param name="index">The index of the subsystem.</param>
         public static void RemoveSubSystem(ref PlayerLoopSystem playerLoop, int index)
         {
             if (index < 0) throw new ArgumentException("The specified index less than zero.");
@@ -183,6 +226,12 @@ namespace UGF.Update.Runtime
             }
         }
 
+        /// <summary>
+        /// Prints full hierarchy of the specified player loop system as string representation.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to print.</param>
+        /// <param name="depth">The initial indent depth.</param>
+        /// <param name="indent">The indent value used for nested nodes.</param>
         public static string PrintPlayerLoop(PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
         {
             var builder = new StringBuilder();
@@ -192,6 +241,13 @@ namespace UGF.Update.Runtime
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Prints full hierarchy of the specified player loop system as string representation.
+        /// </summary>
+        /// <param name="builder">The builder used to construct string.</param>
+        /// <param name="playerLoop">The player loop system to print.</param>
+        /// <param name="depth">The initial indent depth.</param>
+        /// <param name="indent">The indent value used for nested nodes.</param>
         public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
