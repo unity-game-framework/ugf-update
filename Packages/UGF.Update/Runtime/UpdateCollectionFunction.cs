@@ -12,9 +12,12 @@ namespace UGF.Update.Runtime
             UpdateFunction = updateFunction ?? throw new ArgumentNullException(nameof(updateFunction));
         }
 
-        protected override void OnUpdate(THandler handler)
+        public override void Update()
         {
-            UpdateFunction(handler);
+            foreach (THandler handler in this)
+            {
+                UpdateFunction(handler);
+            }
         }
     }
 }

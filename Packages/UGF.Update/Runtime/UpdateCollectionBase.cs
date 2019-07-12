@@ -56,6 +56,8 @@ namespace UGF.Update.Runtime
             m_queueRemove = new HashSet<THandler>(comparer);
         }
 
+        public abstract void Update();
+
         public bool Contains(THandler handler)
         {
             return m_handlers.Contains(handler);
@@ -79,14 +81,6 @@ namespace UGF.Update.Runtime
         public bool Remove(THandler handler)
         {
             return m_queueRemove.Add(handler);
-        }
-
-        public void Update()
-        {
-            foreach (THandler handler in m_handlers)
-            {
-                OnUpdate(handler);
-            }
         }
 
         public bool ApplyQueue()
@@ -143,8 +137,6 @@ namespace UGF.Update.Runtime
         {
             return m_handlers.GetEnumerator();
         }
-
-        protected abstract void OnUpdate(THandler handler);
 
         IEnumerator IEnumerable.GetEnumerator()
         {

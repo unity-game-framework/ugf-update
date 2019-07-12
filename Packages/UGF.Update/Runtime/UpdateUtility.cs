@@ -200,7 +200,7 @@ namespace UGF.Update.Runtime
 
             string name = type != null
                 ? !string.IsNullOrEmpty(type.Namespace) ? $"{type.Namespace}.{type.Name}" : type.Name
-                : "PlayerLoopSystem (No type)";
+                : "PlayerLoopSystem";
 
             builder.Append(string.Concat(Enumerable.Repeat(indent, depth)));
             builder.Append(name);

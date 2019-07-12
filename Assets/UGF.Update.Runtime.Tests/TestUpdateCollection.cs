@@ -17,9 +17,12 @@ namespace UGF.Update.Runtime.Tests
 
         public class Collection : UpdateCollectionBase<Target>
         {
-            protected override void OnUpdate(Target handler)
+            public override void Update()
             {
-                handler.Update();
+                foreach (Target target in this)
+                {
+                    target.Update();
+                }
             }
         }
 

@@ -8,9 +8,12 @@ namespace UGF.Update.Runtime
         {
         }
 
-        protected override void OnUpdate(THandler handler)
+        public override void Update()
         {
-            handler.OnUpdate();
+            foreach (THandler handler in this)
+            {
+                handler.OnUpdate();
+            }
         }
     }
 }
