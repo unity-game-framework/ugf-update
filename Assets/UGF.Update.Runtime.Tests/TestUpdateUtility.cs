@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine.Experimental.LowLevel;
+using UnityEngine.TestTools;
 using PlayerLoops = UnityEngine.Experimental.PlayerLoop;
 
 namespace UGF.Update.Runtime.Tests
@@ -14,6 +18,24 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
+        public class Target2
+        {
+            public int Counter { get; private set; }
+
+            public void Update()
+            {
+                Counter++;
+            }
+        }
+
+        private class TestPlayerLoopScope : IDisposable
+        {
+            public void Dispose()
+            {
+                PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+            }
+        }
+
         [Test]
         public void SetupPlayer()
         {
@@ -21,9 +43,118 @@ namespace UGF.Update.Runtime.Tests
 
             var target = new Target();
 
-            UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), target.Update);
+            bool result = UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), target.Update);
 
             PlayerLoop.SetPlayerLoop(playerLoop);
+
+            Assert.True(result);
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopInitialization()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.Initialization));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.Update));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopEarlyUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.EarlyUpdate));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopFixedUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.FixedUpdate));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopPreUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.PreUpdate));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopPostLateUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.PostLateUpdate), 2);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopPreLateUpdate()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.PreLateUpdate), 2);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerLoopCustom()
+        {
+            yield return null;
+
+            using (new TestPlayerLoopScope())
+            {
+                PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+                var target = new Target2();
+
+                bool result1 = UpdateUtility.TryAddSubSystem(ref playerLoop, typeof(PlayerLoops.Update), typeof(Target2), UpdateSubSystemInsertion.InsideBottom);
+                bool result2 = UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(Target2), target.Update);
+
+                Assert.True(result1);
+                Assert.True(result2);
+
+                PlayerLoop.SetPlayerLoop(playerLoop);
+
+                yield return null;
+                yield return null;
+
+                Assert.AreEqual(1, target.Counter);
+            }
+        }
+
+        [Test, Ignore("Require Unity 2019.3")]
+        public void ChangePlayerLoop()
+        {
+            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            bool result1 = UpdateUtility.TryAddSubSystem(ref playerLoop, typeof(PlayerLoops.Update), typeof(Target), UpdateSubSystemInsertion.InsideBottom);
+
+            Assert.True(result1);
+
+            PlayerLoop.SetPlayerLoop(playerLoop);
+
+            playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            bool result2 = UpdateUtility.ContainsSubSystem(playerLoop, typeof(Target));
+
+            Assert.True(result2);
         }
 
         [Test]
@@ -140,7 +271,7 @@ namespace UGF.Update.Runtime.Tests
             Type subSystemType = typeof(PlayerLoops.FixedUpdate);
             Type targetSubSystemType = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate);
 
-            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, subSystemType, targetSubSystemType, UpdateSubSystemInsertion.Before);
+            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, targetSubSystemType, subSystemType, UpdateSubSystemInsertion.Before);
 
             Assert.True(result0);
 
@@ -175,7 +306,7 @@ namespace UGF.Update.Runtime.Tests
             Type subSystemType = typeof(PlayerLoops.FixedUpdate);
             Type targetSubSystemType = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate);
 
-            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, subSystemType, targetSubSystemType, UpdateSubSystemInsertion.After);
+            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, targetSubSystemType, subSystemType, UpdateSubSystemInsertion.After);
 
             Assert.True(result0);
 
@@ -210,7 +341,7 @@ namespace UGF.Update.Runtime.Tests
             Type subSystemType = typeof(PlayerLoops.FixedUpdate);
             Type targetSubSystemType = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate);
 
-            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, subSystemType, targetSubSystemType, UpdateSubSystemInsertion.InsideTop);
+            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, targetSubSystemType, subSystemType, UpdateSubSystemInsertion.InsideTop);
 
             Assert.True(result0);
 
@@ -247,7 +378,7 @@ namespace UGF.Update.Runtime.Tests
             Type subSystemType = typeof(PlayerLoops.FixedUpdate);
             Type targetSubSystemType = typeof(PlayerLoops.Update);
 
-            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, subSystemType, targetSubSystemType, UpdateSubSystemInsertion.InsideTop);
+            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, targetSubSystemType, subSystemType, UpdateSubSystemInsertion.InsideTop);
 
             Assert.True(result0);
 
@@ -284,7 +415,7 @@ namespace UGF.Update.Runtime.Tests
             Type subSystemType = typeof(PlayerLoops.FixedUpdate);
             Type targetSubSystemType = typeof(PlayerLoops.Update);
 
-            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, subSystemType, targetSubSystemType, UpdateSubSystemInsertion.InsideBottom);
+            bool result0 = UpdateUtility.TryAddSubSystem(ref playerLoop, targetSubSystemType, subSystemType, UpdateSubSystemInsertion.InsideBottom);
 
             Assert.True(result0);
 
@@ -343,7 +474,7 @@ namespace UGF.Update.Runtime.Tests
                 }
             };
 
-            UpdateUtility.AddSubSystem(ref playerLoop, typeof(PlayerLoops.FixedUpdate), 1);
+            UpdateUtility.AddSubSystem(ref playerLoop, typeof(PlayerLoops.FixedUpdate), IntPtr.Zero, 1);
 
             Assert.AreEqual(4, playerLoop.subSystemList.Length);
             Assert.AreEqual(typeof(PlayerLoops.PreUpdate), playerLoop.subSystemList[0].type);
@@ -384,6 +515,31 @@ namespace UGF.Update.Runtime.Tests
             string result = UpdateUtility.PrintPlayerLoop(playerLoopSystem);
 
             Assert.Pass(result);
+        }
+
+        private static IEnumerator TestPlayerLoopUpdate(Type subSystemType, int waitFrames = 1, bool waitForStart = true)
+        {
+            if (waitForStart)
+            {
+                yield return null;
+            }
+
+            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            var target = new Target2();
+
+            bool result = UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, target.Update);
+
+            Assert.True(result);
+
+            PlayerLoop.SetPlayerLoop(playerLoop);
+
+            for (int i = 0; i < waitFrames; i++)
+            {
+                yield return null;
+            }
+
+            Assert.AreEqual(1, target.Counter);
         }
     }
 }
