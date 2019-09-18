@@ -5,25 +5,18 @@ namespace UGF.Update.Runtime.Tests
 {
     public class TestUpdateCollectionBase
     {
-        public class Target
+        public class Target : IUpdateHandler
         {
             public int Counter { get; private set; }
 
-            public void Update()
+            public void OnUpdate()
             {
                 Counter++;
             }
         }
 
-        public class Collection : UpdateCollectionBase<Target>
+        public class Collection : UpdateSet<Target>
         {
-            public override void Update()
-            {
-                foreach (Target target in this)
-                {
-                    target.Update();
-                }
-            }
         }
 
         [Test]
