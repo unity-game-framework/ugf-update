@@ -3,15 +3,22 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
-    public class UpdateSet<TItem> : IUpdateCollection<TItem> where TItem : IUpdateHandler
+    public class UpdateListHandler<TItem> : IUpdateCollection<TItem>
     {
         public int Count { get { return m_items.Count; } }
+        public TItem this[int index] { get { return m_items[index]; } }
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
 
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }
         IUpdateQueue IUpdateCollection.Queue { get { return Queue; } }
 
-        private readonly HashSet<TItem> m_items = new HashSet<TItem>();
+        private readonly UpdateHandler<TItem> m_item;
+        private readonly List<TItem> m_items = new List<TItem>();
+
+        public UpdateListHandler(UpdateHandler<TItem> item)
+        {
+            m_item = item;
+        }
 
         public bool Contains(TItem item)
         {
@@ -37,9 +44,9 @@ namespace UGF.Update.Runtime
 
         public void Update()
         {
-            foreach (TItem item in m_items)
+            for (int i = 0; i < m_items.Count; i++)
             {
-                item.OnUpdate();
+                m_item(m_items[i]);
             }
         }
 
@@ -57,7 +64,7 @@ namespace UGF.Update.Runtime
             return changed;
         }
 
-        public HashSet<TItem>.Enumerator GetEnumerator()
+        public List<TItem>.Enumerator GetEnumerator()
         {
             return m_items.GetEnumerator();
         }

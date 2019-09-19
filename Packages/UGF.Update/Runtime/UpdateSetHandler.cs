@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
-    public class UpdateSet<TItem> : IUpdateCollection<TItem> where TItem : IUpdateHandler
+    public class UpdateSetHandler<TItem> : IUpdateCollection<TItem>
     {
         public int Count { get { return m_items.Count; } }
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
@@ -11,7 +11,13 @@ namespace UGF.Update.Runtime
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }
         IUpdateQueue IUpdateCollection.Queue { get { return Queue; } }
 
+        private readonly UpdateHandler<TItem> m_item;
         private readonly HashSet<TItem> m_items = new HashSet<TItem>();
+
+        public UpdateSetHandler(UpdateHandler<TItem> item)
+        {
+            m_item = item;
+        }
 
         public bool Contains(TItem item)
         {
@@ -39,7 +45,7 @@ namespace UGF.Update.Runtime
         {
             foreach (TItem item in m_items)
             {
-                item.OnUpdate();
+                m_item(item);
             }
         }
 

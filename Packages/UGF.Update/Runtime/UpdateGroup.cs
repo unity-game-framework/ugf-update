@@ -1,77 +1,88 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine.Profiling;
+using System.Collections.ObjectModel;
 
 namespace UGF.Update.Runtime
 {
-    public class UpdateGroup : UpdateCollectionBase<IUpdateGroup>, IUpdateGroup
+    public class UpdateGroup : IUpdateGroup
     {
         public string Name { get; }
-        public bool Enable { get; set; }
+        public bool Enable { get; set; } = true;
+        public IUpdateCollection Collection { get; }
+        public IReadOnlyList<IUpdateGroup> SubGroups { get; }
 
-        protected override ICollection<IUpdateGroup> Collection { get { return m_groups.Values; } }
+        private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
+        private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
 
-        private readonly Dictionary<string, IUpdateGroup> m_groups;
-
-        public UpdateGroup(string name, IEqualityComparer<IUpdateGroup> comparer = null) : base(comparer)
+        public UpdateGroup(string name, IUpdateCollection collection)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
-
-            m_groups = new Dictionary<string, IUpdateGroup>();
-
             Name = name;
+            Collection = collection;
+            SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
         }
 
-        public override bool Contains(IUpdateGroup handler)
+        public void Add(IUpdateGroup group)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-
-            return m_groups.ContainsKey(handler.Name);
+            m_subGroups.Add(group);
+            m_subGroupsByName.Add(group.Name, group);
         }
 
-        public override bool Add(IUpdateGroup handler)
+        public void Remove(IUpdateGroup group)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-            if (m_groups.ContainsKey(handler.Name)) throw new ArgumentException("The group with the specified name already exists.", nameof(handler));
-
-            return base.Add(handler);
+            if (m_subGroupsByName.Remove(group.Name))
+            {
+                m_subGroups.Remove(group);
+            }
         }
 
-        public override void Update()
+        public void Insert(IUpdateGroup group, int index)
+        {
+            m_subGroups.Insert(index, group);
+            m_subGroupsByName.Add(group.Name, group);
+        }
+
+        public void Update()
         {
             if (Enable)
             {
-                foreach (KeyValuePair<string, IUpdateGroup> pair in m_groups)
+                Collection.ApplyQueueAndUpdate();
+
+                for (int i = 0; i < m_subGroups.Count; i++)
                 {
-                    Profiler.BeginSample(pair.Key);
-
-                    pair.Value.ApplyQueueAndUpdate();
-
-                    Profiler.EndSample();
+                    m_subGroups[i].Update();
                 }
             }
         }
 
-        public override bool ApplyQueue()
+        public T GetSubGroup<T>(string name) where T : IUpdateGroup
         {
-            if (Queue.AnyQueued)
+            return (T)m_subGroupsByName[name];
+        }
+
+        public IUpdateGroup GetSubGroup(string name)
+        {
+            return m_subGroupsByName[name];
+        }
+
+        public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
+        {
+            if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value) && value is T cast)
             {
-                foreach (IUpdateGroup updateGroup in Queue.Add)
-                {
-                    m_groups.Add(updateGroup.Name, updateGroup);
-                }
-
-                foreach (IUpdateGroup updateGroup in Queue.Remove)
-                {
-                    m_groups.Remove(updateGroup.Name);
-                }
-
-                Queue.Clear();
-
+                group = cast;
                 return true;
             }
 
+            group = default;
             return false;
+        }
+
+        public bool TryGetSubGroup(string name, out IUpdateGroup group)
+        {
+            return m_subGroupsByName.TryGetValue(name, out group);
+        }
+
+        public List<IUpdateGroup>.Enumerator GetEnumerator()
+        {
+            return m_subGroups.GetEnumerator();
         }
     }
 }
