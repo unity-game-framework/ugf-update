@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -15,19 +16,28 @@ namespace UGF.Update.Runtime
 
         public UpdateGroup(string name, IUpdateCollection collection)
         {
-            Name = name;
-            Collection = collection;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Collection = collection ?? throw new ArgumentNullException(nameof(collection));
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
         }
 
         public void Add(IUpdateGroup group)
         {
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
+            if (m_subGroupsByName.ContainsKey(group.Name))
+            {
+                throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
+            }
+
             m_subGroups.Add(group);
             m_subGroupsByName.Add(group.Name, group);
         }
 
         public void Remove(IUpdateGroup group)
         {
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
             if (m_subGroupsByName.Remove(group.Name))
             {
                 m_subGroups.Remove(group);
@@ -36,6 +46,8 @@ namespace UGF.Update.Runtime
 
         public void Insert(IUpdateGroup group, int index)
         {
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
             m_subGroups.Insert(index, group);
             m_subGroupsByName.Add(group.Name, group);
         }
@@ -53,18 +65,41 @@ namespace UGF.Update.Runtime
             }
         }
 
+        public T GetCollection<T>() where T : IUpdateCollection
+        {
+            return (T)Collection;
+        }
+
+        public bool TryGetCollection<T>(out T collection) where T : IUpdateCollection
+        {
+            if (Collection is T cast)
+            {
+                collection = cast;
+                return true;
+            }
+
+            collection = default;
+            return false;
+        }
+
         public T GetSubGroup<T>(string name) where T : IUpdateGroup
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             return (T)m_subGroupsByName[name];
         }
 
         public IUpdateGroup GetSubGroup(string name)
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             return m_subGroupsByName[name];
         }
 
         public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value) && value is T cast)
             {
                 group = cast;
@@ -77,6 +112,8 @@ namespace UGF.Update.Runtime
 
         public bool TryGetSubGroup(string name, out IUpdateGroup group)
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             return m_subGroupsByName.TryGetValue(name, out group);
         }
 

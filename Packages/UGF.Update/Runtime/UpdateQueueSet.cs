@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,6 +20,8 @@ namespace UGF.Update.Runtime
 
         public bool Apply(ICollection<TItem> collection)
         {
+            if (collection == null) throw new ArgumentNullException(nameof(collection));
+
             if (AnyQueued)
             {
                 foreach (TItem item in m_add)

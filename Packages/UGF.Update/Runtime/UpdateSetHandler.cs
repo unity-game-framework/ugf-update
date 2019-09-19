@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace UGF.Update.Runtime
 
         public UpdateSetHandler(UpdateHandler<TItem> item)
         {
-            m_item = item;
+            m_item = item ?? throw new ArgumentNullException(nameof(item));
         }
 
         public bool Contains(TItem item)

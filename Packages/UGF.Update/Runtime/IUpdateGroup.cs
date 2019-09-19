@@ -13,6 +13,8 @@ namespace UGF.Update.Runtime
         void Remove(IUpdateGroup group);
         void Insert(IUpdateGroup group, int index);
         void Update();
+        T GetCollection<T>() where T : IUpdateCollection;
+        bool TryGetCollection<T>(out T collection) where T : IUpdateCollection;
         T GetSubGroup<T>(string name) where T : IUpdateGroup;
         IUpdateGroup GetSubGroup(string name);
         bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup;
