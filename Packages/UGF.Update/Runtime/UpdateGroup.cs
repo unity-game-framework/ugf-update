@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UnityEngine.Profiling;
 
 namespace UGF.Update.Runtime
 {
@@ -19,6 +20,14 @@ namespace UGF.Update.Runtime
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
+        }
+
+        public void Insert(IUpdateGroup group, int index)
+        {
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
+            m_subGroups.Insert(index, group);
+            m_subGroupsByName.Add(group.Name, group);
         }
 
         public void Add(IUpdateGroup group)
@@ -44,24 +53,20 @@ namespace UGF.Update.Runtime
             }
         }
 
-        public void Insert(IUpdateGroup group, int index)
-        {
-            if (group == null) throw new ArgumentNullException(nameof(group));
-
-            m_subGroups.Insert(index, group);
-            m_subGroupsByName.Add(group.Name, group);
-        }
-
         public void Update()
         {
             if (Enable)
             {
+                Profiler.BeginSample(Name);
+
                 Collection.ApplyQueueAndUpdate();
 
                 for (int i = 0; i < m_subGroups.Count; i++)
                 {
                     m_subGroups[i].Update();
                 }
+
+                Profiler.EndSample();
             }
         }
 
