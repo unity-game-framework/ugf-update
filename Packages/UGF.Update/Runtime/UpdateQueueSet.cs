@@ -4,10 +4,21 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update queue set.
+    /// </summary>
     public class UpdateQueueSet<TItem> : IUpdateQueue<TItem>
     {
         public bool AnyQueued { get { return m_add.Count > 0 || m_remove.Count > 0; } }
+
+        /// <summary>
+        /// Gets the collection of the objects queued to add.
+        /// </summary>
         public HashSet<TItem> Add { get { return m_add; } }
+
+        /// <summary>
+        /// Gets the collection of the objects queued to remove.
+        /// </summary>
         public HashSet<TItem> Remove { get { return m_remove; } }
 
         ICollection<TItem> IUpdateQueue<TItem>.Add { get { return Add; } }

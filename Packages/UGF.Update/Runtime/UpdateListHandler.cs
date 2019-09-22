@@ -4,21 +4,37 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update collection as ordered list with the specified handler to update each item.
+    /// </summary>
     public class UpdateListHandler<TItem> : IUpdateCollection<TItem>
     {
         public int Count { get { return m_items.Count; } }
+
+        /// <summary>
+        /// Gets the item by the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item in collection.</param>
         public TItem this[int index] { get { return m_items[index]; } }
+
+        /// <summary>
+        /// Gets the queue of the collection.
+        /// </summary>
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
 
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }
         IUpdateQueue IUpdateCollection.Queue { get { return Queue; } }
 
-        private readonly UpdateHandler<TItem> m_item;
+        private readonly UpdateHandler<TItem> m_handler;
         private readonly List<TItem> m_items = new List<TItem>();
 
-        public UpdateListHandler(UpdateHandler<TItem> item)
+        /// <summary>
+        /// Creates collection with the specified handler to update each item.
+        /// </summary>
+        /// <param name="handler">The handler used to update each item in collection.</param>
+        public UpdateListHandler(UpdateHandler<TItem> handler)
         {
-            m_item = item ?? throw new ArgumentNullException(nameof(item));
+            m_handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
 
         public bool Contains(TItem item)
@@ -47,7 +63,7 @@ namespace UGF.Update.Runtime
         {
             for (int i = 0; i < m_items.Count; i++)
             {
-                m_item(m_items[i]);
+                m_handler(m_items[i]);
             }
         }
 

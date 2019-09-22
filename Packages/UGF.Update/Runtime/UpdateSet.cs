@@ -3,9 +3,16 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update collection as unordered set of the items where each of them implements 'IUpdateHandler' interface.
+    /// </summary>
     public class UpdateSet<TItem> : IUpdateCollection<TItem> where TItem : IUpdateHandler
     {
         public int Count { get { return m_items.Count; } }
+
+        /// <summary>
+        /// Gets the queue of the collection.
+        /// </summary>
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
 
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }

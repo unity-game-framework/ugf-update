@@ -5,6 +5,14 @@ using UnityEngine.Profiling;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update group with the specified update collection and collection of the subgroup.
+    /// </summary>
+    /// <remarks>
+    /// This update group stores and updates subgroup in an ordered collection.
+    ///
+    /// All subgroups stored by the group name which must be unique.
+    /// </remarks>
     public class UpdateGroup : IUpdateGroup
     {
         public string Name { get; }
@@ -15,6 +23,11 @@ namespace UGF.Update.Runtime
         private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
         private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
 
+        /// <summary>
+        /// Creates update group with the specified name and update collection.
+        /// </summary>
+        /// <param name="name">The name of the group.</param>
+        /// <param name="collection">The update collection.</param>
         public UpdateGroup(string name, IUpdateCollection collection)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -22,9 +35,22 @@ namespace UGF.Update.Runtime
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
         }
 
+        /// <summary>
+        /// Inserts the specified group at the specified index.
+        /// </summary>
+        /// <remarks>
+        /// The name of the group must be unique.
+        /// </remarks>
+        /// <param name="group">The group to insert.</param>
+        /// <param name="index">The index to insert at.</param>
         public void Insert(IUpdateGroup group, int index)
         {
             if (group == null) throw new ArgumentNullException(nameof(group));
+
+            if (m_subGroupsByName.ContainsKey(group.Name))
+            {
+                throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
+            }
 
             m_subGroups.Insert(index, group);
             m_subGroupsByName.Add(group.Name, group);

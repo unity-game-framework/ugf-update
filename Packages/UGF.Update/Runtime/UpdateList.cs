@@ -3,10 +3,22 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update collection as ordered list of the items where each of them implements 'IUpdateHandler' interface.
+    /// </summary>
     public class UpdateList<TItem> : IUpdateCollection<TItem> where TItem : IUpdateHandler
     {
         public int Count { get { return m_items.Count; } }
+
+        /// <summary>
+        /// Gets the item by the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item in collection.</param>
         public TItem this[int index] { get { return m_items[index]; } }
+
+        /// <summary>
+        /// Gets the queue of the collection.
+        /// </summary>
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
 
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }

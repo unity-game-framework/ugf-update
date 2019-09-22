@@ -4,20 +4,31 @@ using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update collection as unordered set with the specified handler to update each item.
+    /// </summary>
     public class UpdateSetHandler<TItem> : IUpdateCollection<TItem>
     {
         public int Count { get { return m_items.Count; } }
+
+        /// <summary>
+        /// Gets the queue of the collection.
+        /// </summary>
         public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
 
         IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }
         IUpdateQueue IUpdateCollection.Queue { get { return Queue; } }
 
-        private readonly UpdateHandler<TItem> m_item;
+        private readonly UpdateHandler<TItem> m_handler;
         private readonly HashSet<TItem> m_items = new HashSet<TItem>();
 
-        public UpdateSetHandler(UpdateHandler<TItem> item)
+        /// <summary>
+        /// Creates collection with the specified handler to update each item.
+        /// </summary>
+        /// <param name="handler">The handler used to update each item in collection.</param>
+        public UpdateSetHandler(UpdateHandler<TItem> handler)
         {
-            m_item = item ?? throw new ArgumentNullException(nameof(item));
+            m_handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
 
         public bool Contains(TItem item)
@@ -46,7 +57,7 @@ namespace UGF.Update.Runtime
         {
             foreach (TItem item in m_items)
             {
-                m_item(item);
+                m_handler(item);
             }
         }
 
