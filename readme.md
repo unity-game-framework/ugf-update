@@ -23,7 +23,7 @@ UGF.Update
 
 ## Description
 
-No description.
+Provides utilities to work with `PlayerLoop` and collections to manager updates.
 
 ## How to Install
 
