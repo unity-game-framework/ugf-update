@@ -69,10 +69,10 @@ namespace UGF.Update.Runtime
         /// Tries to add a subsystem with the specified type, targeting to a subsystem with the specified type and use specified insertion mode.
         /// </summary>
         /// <param name="playerLoop">The player loop system to change.</param>
-        /// <param name="subSystemType">The type of the new subsystem.</param>
         /// <param name="targetSubSystemType">The type of the subsystem to find.</param>
+        /// <param name="subSystemType">The type of the new subsystem.</param>
         /// <param name="insertion">The insertion mode used to create new subsystem relative to found target subsystem.</param>
-        public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, Type targetSubSystemType, UpdateSubSystemInsertion insertion)
+        public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type targetSubSystemType, Type subSystemType, UpdateSubSystemInsertion insertion)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (targetSubSystemType == null) throw new ArgumentNullException(nameof(targetSubSystemType));
@@ -91,17 +91,17 @@ namespace UGF.Update.Runtime
                         {
                             case UpdateSubSystemInsertion.Before:
                             {
-                                AddSubSystem(ref playerLoop, subSystemType, i);
+                                AddSubSystem(ref playerLoop, subSystemType, subSystem.updateFunction, i);
                                 break;
                             }
                             case UpdateSubSystemInsertion.After:
                             {
-                                AddSubSystem(ref playerLoop, subSystemType, i + 1);
+                                AddSubSystem(ref playerLoop, subSystemType, subSystem.updateFunction, i + 1);
                                 break;
                             }
                             case UpdateSubSystemInsertion.InsideTop:
                             {
-                                AddSubSystem(ref subSystem, subSystemType, 0);
+                                AddSubSystem(ref subSystem, subSystemType, subSystem.updateFunction, 0);
 
                                 subSystems[i] = subSystem;
                                 break;
@@ -110,7 +110,7 @@ namespace UGF.Update.Runtime
                             {
                                 int index = subSystem.subSystemList?.Length ?? 0;
 
-                                AddSubSystem(ref subSystem, subSystemType, index);
+                                AddSubSystem(ref subSystem, subSystemType, subSystem.updateFunction, index);
 
                                 subSystems[i] = subSystem;
                                 break;
@@ -121,7 +121,7 @@ namespace UGF.Update.Runtime
                         return true;
                     }
 
-                    if (TryAddSubSystem(ref subSystem, subSystemType, targetSubSystemType, insertion))
+                    if (TryAddSubSystem(ref subSystem, targetSubSystemType, subSystemType, insertion))
                     {
                         subSystems[i] = subSystem;
                         return true;
@@ -171,15 +171,22 @@ namespace UGF.Update.Runtime
         /// </summary>
         /// <param name="playerLoop">The player loop system to change.</param>
         /// <param name="subSystemType">The type of the subsystem to add.</param>
+        /// <param name="updateFunction">The native update function of the subsystem to use.</param>
         /// <param name="index">The index of the subsystem.</param>
-        public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, int index)
+        public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, IntPtr updateFunction, int index)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (index < 0) throw new ArgumentException("The specified index less than zero.");
             if (playerLoop.subSystemList != null && index > playerLoop.subSystemList.Length) throw new ArgumentException("The specified index more than length of the subsystems.");
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
-            var subSystem = new PlayerLoopSystem { type = subSystemType };
+
+            var subSystem = new PlayerLoopSystem
+            {
+                type = subSystemType,
+                loopConditionFunction = IntPtr.Zero,
+                updateFunction = updateFunction
+            };
 
             if (subSystems == null)
             {
@@ -260,6 +267,7 @@ namespace UGF.Update.Runtime
 
             builder.Append(string.Concat(Enumerable.Repeat(indent, depth)));
             builder.Append(name);
+            builder.Append($" (condition: {playerLoop.loopConditionFunction}, updateFunction: {playerLoop.updateFunction})");
             builder.AppendLine();
 
             if (playerLoop.updateDelegate != null)

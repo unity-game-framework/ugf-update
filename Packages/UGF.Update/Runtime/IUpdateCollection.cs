@@ -1,66 +1,39 @@
-using System;
 using System.Collections;
 
 namespace UGF.Update.Runtime
 {
     /// <summary>
-    /// Represents collection with items which need to be handle update.
+    /// Represents update collection with add and remove queue.
     /// </summary>
     public interface IUpdateCollection : IEnumerable
     {
         /// <summary>
-        /// Gets the type of the handlers in collection.
-        /// </summary>
-        Type HandlerType { get; }
-
-        /// <summary>
-        /// Gets the count of active handlers in the collection.
+        /// Gets the count of the items in collection.
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// Gets the value that determines whether collection contains any queued handlers.
+        /// Gets the queue of the collection.
         /// </summary>
-        bool AnyQueued { get; }
+        IUpdateQueue Queue { get; }
 
         /// <summary>
-        /// Gets the count of the handlers queued to add into the collection of active handlers.
-        /// </summary>
-        int QueueAddCount { get; }
-
-        /// <summary>
-        /// Gets the count of the handlers queued to remove from the collection of active handlers.
-        /// </summary>
-        int QueueRemoveCount { get; }
-
-        /// <summary>
-        /// Updates all handlers in collection of active handlers.
+        /// Updates collection.
         /// </summary>
         void Update();
 
         /// <summary>
-        /// Applies all queued handlers into collection of active handlers and clears all queues.
-        /// <para>
-        /// Returns true if the were any applied handler, otherwise false.
-        /// </para>
+        /// Applies queue to collection.
         /// </summary>
         bool ApplyQueue();
 
         /// <summary>
-        /// Applies all queued handlers if required and than forces update.
-        /// <para>
-        /// Returns true if the were any applied handler, otherwise false.
-        /// </para>
+        /// Applies queue and updates collection.
         /// </summary>
         bool ApplyQueueAndUpdate();
 
         /// <summary>
-        /// Clears all queued handlers from add and remove queues.
-        /// </summary>
-        void ClearQueue();
-
-        /// <summary>
-        /// Clears all active handlers and all queues.
+        /// Clears collection.
         /// </summary>
         void Clear();
     }
