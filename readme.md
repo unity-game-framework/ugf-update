@@ -5,8 +5,7 @@ UGF.Update
 ## Info
 
 - **Version**: `1.0.0-preview`
-- **Unity Version**: `2019.1.0`
-- **Scripting Runtime Version**: `.NET 4.x Equivalent`
+- **Unity Version**: `2019.2.0`
 - **Api Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
@@ -24,7 +23,7 @@ UGF.Update
 
 ## Description
 
-No description.
+Provides utilities to work with `PlayerLoop` and collections to manager updates.
 
 ## How to Install
 

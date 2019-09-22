@@ -1,12 +1,12 @@
 namespace UGF.Update.Runtime
 {
     /// <summary>
-    /// Represents an object that can handler updates.
+    /// Represents update handler with 'OnUpdate' method.
     /// </summary>
     public interface IUpdateHandler
     {
         /// <summary>
-        /// Invokes on update.
+        /// Invoked on update.
         /// </summary>
         void OnUpdate();
     }

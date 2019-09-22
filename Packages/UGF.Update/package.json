@@ -2,8 +2,8 @@
     "name": "com.ugf.update",
     "displayName": "UGF.Update",
     "version": "1.0.0-preview",
-    "unity": "2019.1",
-    "description": "No description.",
+    "unity": "2019.2",
+    "description": "Provides utilities to work with PlayerLoop and collections to manager updates.",
     "author": {
         "name": "Unity Game Framework",
         "url": "https://github.com/unity-game-framework"
