@@ -9,14 +9,14 @@ namespace UGF.Update.Runtime.Tests
 {
     public class TestUpdateUtility
     {
-        public class Target
+        private class Target
         {
             public void Update()
             {
             }
         }
 
-        public class Target2
+        private class Target2
         {
             public int Counter { get; private set; }
 
@@ -146,12 +146,12 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
-        [Test, Ignore("Require Unity 2019.3")]
+        [Test]
         public void ChangePlayerLoop()
         {
             using (new TestPlayerLoopScope())
             {
-                PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+                PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
 
                 bool result1 = UpdateUtility.TryAddSubSystem(ref playerLoop, typeof(PlayerLoops.Update), typeof(Target), UpdateSubSystemInsertion.InsideBottom);
 
@@ -159,7 +159,7 @@ namespace UGF.Update.Runtime.Tests
 
                 PlayerLoop.SetPlayerLoop(playerLoop);
 
-                playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+                playerLoop = PlayerLoop.GetCurrentPlayerLoop();
 
                 bool result2 = UpdateUtility.ContainsSubSystem(playerLoop, typeof(Target));
 
