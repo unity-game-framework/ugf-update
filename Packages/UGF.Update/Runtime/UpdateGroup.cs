@@ -35,7 +35,9 @@ namespace UGF.Update.Runtime
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
 
+#if ENABLE_PROFILER
             m_marker = new ProfilerMarker($"UpdateGroup.{Name}");
+#endif
         }
 
         /// <summary>
@@ -99,35 +101,28 @@ namespace UGF.Update.Runtime
             }
         }
 
-        public T GetCollection<T>() where T : IUpdateCollection
-        {
-            return (T)Collection;
-        }
-
-        public bool TryGetCollection<T>(out T collection) where T : IUpdateCollection
-        {
-            if (Collection is T cast)
-            {
-                collection = cast;
-                return true;
-            }
-
-            collection = default;
-            return false;
-        }
-
         public T GetSubGroup<T>(string name) where T : IUpdateGroup
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            return (T)m_subGroupsByName[name];
+            if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
+            {
+                throw new ArgumentException($"A group by the specified name not found: '{name}'.");
+            }
+
+            return (T)group;
         }
 
         public IUpdateGroup GetSubGroup(string name)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            return m_subGroupsByName[name];
+            if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
+            {
+                throw new ArgumentException($"A group by the specified name not found: '{name}'.");
+            }
+
+            return group;
         }
 
         public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
