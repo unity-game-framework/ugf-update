@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine.Experimental.LowLevel;
+using UnityEngine.LowLevel;
 
 namespace UGF.Update.Runtime
 {
@@ -11,6 +11,14 @@ namespace UGF.Update.Runtime
     /// </summary>
     public static class UpdateUtility
     {
+        /// <summary>
+        /// Resets player loop to default.
+        /// </summary>
+        public static void ResetPlayerLoopToDefault()
+        {
+            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+        }
+
         /// <summary>
         /// Tries to add the specified update function into a found subsystem of the specified type from the player loop system.
         /// </summary>

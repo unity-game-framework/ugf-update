@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.Experimental.LowLevel;
-using PlayerLoops = UnityEngine.Experimental.PlayerLoop;
+using UnityEngine.LowLevel;
+using PlayerLoops = UnityEngine.PlayerLoop;
 
 namespace UGF.Update.Runtime.Tests
 {

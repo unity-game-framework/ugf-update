@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using NUnit.Framework;
-using UnityEngine.Experimental.LowLevel;
+using UnityEngine.LowLevel;
 using UnityEngine.TestTools;
-using PlayerLoops = UnityEngine.Experimental.PlayerLoop;
+using PlayerLoops = UnityEngine.PlayerLoop;
 
 namespace UGF.Update.Runtime.Tests
 {
@@ -30,7 +30,7 @@ namespace UGF.Update.Runtime.Tests
         {
             public void Dispose()
             {
-                PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+                UpdateUtility.ResetPlayerLoopToDefault();
             }
         }
 
@@ -111,6 +111,15 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
+        [UnityTest, Ignore("Not supported by Unity.")]
+        public IEnumerator PlayerLoopNested()
+        {
+            using (new TestPlayerLoopScope())
+            {
+                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), 2);
+            }
+        }
+
         [UnityTest]
         public IEnumerator PlayerLoopCustom()
         {
@@ -140,19 +149,22 @@ namespace UGF.Update.Runtime.Tests
         [Test, Ignore("Require Unity 2019.3")]
         public void ChangePlayerLoop()
         {
-            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+            using (new TestPlayerLoopScope())
+            {
+                PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
 
-            bool result1 = UpdateUtility.TryAddSubSystem(ref playerLoop, typeof(PlayerLoops.Update), typeof(Target), UpdateSubSystemInsertion.InsideBottom);
+                bool result1 = UpdateUtility.TryAddSubSystem(ref playerLoop, typeof(PlayerLoops.Update), typeof(Target), UpdateSubSystemInsertion.InsideBottom);
 
-            Assert.True(result1);
+                Assert.True(result1);
 
-            PlayerLoop.SetPlayerLoop(playerLoop);
+                PlayerLoop.SetPlayerLoop(playerLoop);
 
-            playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+                playerLoop = PlayerLoop.GetDefaultPlayerLoop();
 
-            bool result2 = UpdateUtility.ContainsSubSystem(playerLoop, typeof(Target));
+                bool result2 = UpdateUtility.ContainsSubSystem(playerLoop, typeof(Target));
 
-            Assert.True(result2);
+                Assert.True(result2);
+            }
         }
 
         [Test]
