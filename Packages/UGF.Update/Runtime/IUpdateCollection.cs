@@ -8,7 +8,7 @@ namespace UGF.Update.Runtime
     public interface IUpdateCollection : IEnumerable
     {
         /// <summary>
-        /// Gets the count of the items in collection.
+        /// Gets the count of the items executed in update collection.
         /// </summary>
         int Count { get; }
 
@@ -33,7 +33,7 @@ namespace UGF.Update.Runtime
         bool ApplyQueueAndUpdate();
 
         /// <summary>
-        /// Clears collection.
+        /// Clears queue and collection.
         /// </summary>
         void Clear();
     }

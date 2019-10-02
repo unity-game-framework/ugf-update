@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UnityEngine.Profiling;
+using Unity.Profiling;
 
 namespace UGF.Update.Runtime
 {
@@ -22,6 +22,7 @@ namespace UGF.Update.Runtime
 
         private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
         private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
+        private ProfilerMarker m_marker;
 
         /// <summary>
         /// Creates update group with the specified name and update collection.
@@ -33,6 +34,8 @@ namespace UGF.Update.Runtime
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
+
+            m_marker = new ProfilerMarker($"UpdateGroup.{Name}");
         }
 
         /// <summary>
@@ -83,7 +86,7 @@ namespace UGF.Update.Runtime
         {
             if (Enable)
             {
-                Profiler.BeginSample(Name);
+                m_marker.Begin();
 
                 Collection.ApplyQueueAndUpdate();
 
@@ -92,7 +95,7 @@ namespace UGF.Update.Runtime
                     m_subGroups[i].Update();
                 }
 
-                Profiler.EndSample();
+                m_marker.End();
             }
         }
 

@@ -32,12 +32,13 @@ namespace UGF.Update.Runtime.Tests
 
             collection.Add(target);
 
-            Assert.AreEqual(1, collection.Count);
-
-            collection.Remove(target);
-
             Assert.AreEqual(0, collection.Count);
 
+            collection.ApplyQueue();
+
+            Assert.AreEqual(1, collection.Count);
+
+            collection.Clear();
             collection.Add(target);
             collection.ApplyQueue();
 
@@ -45,7 +46,7 @@ namespace UGF.Update.Runtime.Tests
 
             collection.Remove(target);
 
-            Assert.AreEqual(0, collection.Count);
+            Assert.AreEqual(1, collection.Count);
 
             collection.ApplyQueue();
 
@@ -58,27 +59,23 @@ namespace UGF.Update.Runtime.Tests
             IUpdateCollection<TTarget> collection = CreateCollection();
             TTarget target = CreateTarget();
 
-            bool result0 = collection.Contains(target);
-
-            Assert.False(result0);
+            Assert.False(collection.Contains(target));
 
             collection.Add(target);
 
-            bool result1 = collection.Contains(target);
-
-            Assert.True(result1);
+            Assert.False(collection.Contains(target));
 
             collection.ApplyQueue();
 
-            bool result2 = collection.Contains(target);
-
-            Assert.True(result2);
+            Assert.True(collection.Contains(target));
 
             collection.Remove(target);
 
-            bool result3 = collection.Contains(target);
+            Assert.True(collection.Contains(target));
 
-            Assert.False(result3);
+            collection.ApplyQueue();
+
+            Assert.False(collection.Contains(target));
         }
 
         [Test]
@@ -89,9 +86,10 @@ namespace UGF.Update.Runtime.Tests
 
             collection.Add(target);
 
-            Assert.True(collection.Contains(target));
+            Assert.False(collection.Contains(target));
             Assert.True(collection.Queue.AnyQueued);
             Assert.True(collection.Queue.Add.Contains(target));
+            Assert.False(collection.Queue.Remove.Contains(target));
         }
 
         [Test]
@@ -102,15 +100,16 @@ namespace UGF.Update.Runtime.Tests
 
             collection.Add(target);
 
-            Assert.True(collection.Contains(target));
+            Assert.False(collection.Contains(target));
             Assert.True(collection.Queue.AnyQueued);
             Assert.True(collection.Queue.Add.Contains(target));
+            Assert.False(collection.Queue.Remove.Contains(target));
 
             collection.Remove(target);
 
-            Assert.True(collection.Contains(target));
+            Assert.False(collection.Contains(target));
             Assert.True(collection.Queue.AnyQueued);
-            Assert.True(collection.Queue.Add.Contains(target));
+            Assert.False(collection.Queue.Add.Contains(target));
             Assert.True(collection.Queue.Remove.Contains(target));
         }
 
@@ -162,6 +161,8 @@ namespace UGF.Update.Runtime.Tests
             IUpdateCollection<TTarget> collection = CreateCollection();
             TTarget target = CreateTarget();
 
+            collection.Add(target);
+            collection.ApplyQueue();
             collection.Add(target);
 
             Assert.AreEqual(1, collection.Count);

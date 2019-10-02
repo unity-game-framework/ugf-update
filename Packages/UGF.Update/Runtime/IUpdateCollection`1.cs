@@ -13,21 +13,21 @@ namespace UGF.Update.Runtime
         new IUpdateQueue<TItem> Queue { get; }
 
         /// <summary>
-        /// Determines whether collection contains the specified item.
+        /// Determines whether the specified item exists and executed in collection.
         /// </summary>
         /// <param name="item">The item to check.</param>
         bool Contains(TItem item);
 
         /// <summary>
-        /// Adds the specified item to collection.
+        /// Adds the specified item to add queue.
         /// </summary>
         /// <param name="item">The item to add.</param>
         void Add(TItem item);
 
         /// <summary>
-        /// Removes the specified item from collection.
+        /// Adds the specified item to remove queue.
         /// </summary>
-        /// <param name="item">The item to remove.</param>
+        /// <param name="item">The item to add.</param>
         void Remove(TItem item);
     }
 }
