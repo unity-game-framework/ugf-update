@@ -26,6 +26,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing.
 
+## 3.0.0-preview - 2019-01-01
+- [Commits](https://github.com/unity-game-framework/ugf-update/compare/2.0.0-preview...3.0.0-preview)
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/3?closed=1)
+
+### Added
+- `UpdateUtility.ResetPlayerLoopToDefault`: to reset current player loop.
+
+### Changed
+- Update to Unity 2019.3.
+- Rework update collections and update group.
+
 ## 2.0.0-preview - 2019-09-22
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/1.0.0-preview...2.0.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/2?closed=1)
