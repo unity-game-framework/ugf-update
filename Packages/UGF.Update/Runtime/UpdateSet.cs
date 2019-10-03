@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UGF.Update.Runtime
@@ -6,43 +5,20 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents update collection as unordered set of the items where each of them implements 'IUpdateHandler' interface.
     /// </summary>
-    public class UpdateSet<TItem> : IUpdateCollection<TItem> where TItem : IUpdateHandler
+    public class UpdateSet<TItem> : UpdateCollection<TItem> where TItem : IUpdateHandler
     {
-        public int Count { get { return m_items.Count; } }
+        private readonly HashSet<TItem> m_items;
 
         /// <summary>
-        /// Gets the queue of the collection.
+        /// Creates update set with the specified update queue.
         /// </summary>
-        public UpdateQueueSet<TItem> Queue { get; } = new UpdateQueueSet<TItem>();
-
-        IUpdateQueue<TItem> IUpdateCollection<TItem>.Queue { get { return Queue; } }
-        IUpdateQueue IUpdateCollection.Queue { get { return Queue; } }
-
-        private readonly HashSet<TItem> m_items = new HashSet<TItem>();
-
-        public bool Contains(TItem item)
+        /// <param name="queue">The update queue. (Default value is UpdateQueueSet)</param>
+        public UpdateSet(IUpdateQueue<TItem> queue = null) : base(new HashSet<TItem>(), queue ?? new UpdateQueueSet<TItem>())
         {
-            return m_items.Contains(item);
+            m_items = (HashSet<TItem>)Collection;
         }
 
-        public void Add(TItem item)
-        {
-            m_items.Add(item);
-        }
-
-        public void Remove(TItem item)
-        {
-            m_items.Remove(item);
-        }
-
-        public void Clear()
-        {
-            Queue.Clear();
-
-            m_items.Clear();
-        }
-
-        public void Update()
+        public override void Update()
         {
             foreach (TItem item in m_items)
             {
@@ -50,33 +26,9 @@ namespace UGF.Update.Runtime
             }
         }
 
-        public bool ApplyQueue()
-        {
-            return Queue.Apply(m_items);
-        }
-
-        public bool ApplyQueueAndUpdate()
-        {
-            bool changed = ApplyQueue();
-
-            Update();
-
-            return changed;
-        }
-
         public HashSet<TItem>.Enumerator GetEnumerator()
         {
             return m_items.GetEnumerator();
-        }
-
-        IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator()
-        {
-            return ((IEnumerable<TItem>)m_items).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)m_items).GetEnumerator();
         }
     }
 }

@@ -4,8 +4,8 @@ UGF.Update
 
 ## Info
 
-- **Version**: `2.0.0-preview`
-- **Unity Version**: `2019.2.0`
+- **Version**: `3.0.0-preview`
+- **Unity Version**: `2019.3.0`
 - **Api Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
