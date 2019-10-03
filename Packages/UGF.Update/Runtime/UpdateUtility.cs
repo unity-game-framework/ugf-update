@@ -82,8 +82,8 @@ namespace UGF.Update.Runtime
         /// <param name="insertion">The insertion mode used to create new subsystem relative to found target subsystem.</param>
         public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type targetSubSystemType, Type subSystemType, UpdateSubSystemInsertion insertion)
         {
-            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (targetSubSystemType == null) throw new ArgumentNullException(nameof(targetSubSystemType));
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 
@@ -266,6 +266,7 @@ namespace UGF.Update.Runtime
         public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (indent == null) throw new ArgumentNullException(nameof(indent));
 
             Type type = playerLoop.type;
 

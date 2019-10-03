@@ -13,12 +13,14 @@ namespace UGF.Update.Runtime
     ///
     /// All subgroups stored by the group name which must be unique.
     /// </remarks>
-    public class UpdateGroup : IUpdateGroup
+    public class UpdateGroup<TItem> : IUpdateGroup<TItem>
     {
         public string Name { get; }
         public bool Enable { get; set; } = true;
-        public IUpdateCollection Collection { get; }
+        public IUpdateCollection<TItem> Collection { get; }
         public IReadOnlyList<IUpdateGroup> SubGroups { get; }
+
+        IUpdateCollection IUpdateGroup.Collection { get { return Collection; } }
 
         private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
         private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
@@ -29,9 +31,11 @@ namespace UGF.Update.Runtime
         /// </summary>
         /// <param name="name">The name of the group.</param>
         /// <param name="collection">The update collection.</param>
-        public UpdateGroup(string name, IUpdateCollection collection)
+        public UpdateGroup(string name, IUpdateCollection<TItem> collection)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+
+            Name = name;
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
 
@@ -84,6 +88,17 @@ namespace UGF.Update.Runtime
             }
         }
 
+        public void Remove(string groupName)
+        {
+            if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
+
+            if (m_subGroupsByName.TryGetValue(groupName, out IUpdateGroup group))
+            {
+                m_subGroupsByName.Remove(groupName);
+                m_subGroups.Remove(group);
+            }
+        }
+
         public void Update()
         {
             if (Enable)
@@ -103,7 +118,7 @@ namespace UGF.Update.Runtime
 
         public T GetSubGroup<T>(string name) where T : IUpdateGroup
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
             if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
             {
@@ -115,7 +130,7 @@ namespace UGF.Update.Runtime
 
         public IUpdateGroup GetSubGroup(string name)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
             if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
             {
@@ -127,7 +142,7 @@ namespace UGF.Update.Runtime
 
         public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
             if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value) && value is T cast)
             {
@@ -141,7 +156,7 @@ namespace UGF.Update.Runtime
 
         public bool TryGetSubGroup(string name, out IUpdateGroup group)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
             return m_subGroupsByName.TryGetValue(name, out group);
         }
