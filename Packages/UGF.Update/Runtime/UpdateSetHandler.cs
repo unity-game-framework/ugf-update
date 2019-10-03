@@ -12,6 +12,11 @@ namespace UGF.Update.Runtime
 
         private readonly HashSet<TItem> m_items;
 
+        /// <summary>
+        /// Creates update set with the specified handler and update queue.
+        /// </summary>
+        /// <param name="handler">The handler to update each item.</param>
+        /// <param name="queue">The update queue. (Default value is UpdateQueueSet)</param>
         public UpdateSetHandler(UpdateHandler<TItem> handler, IUpdateQueue<TItem> queue = null) : base(new HashSet<TItem>(), queue ?? new UpdateQueueSet<TItem>())
         {
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));

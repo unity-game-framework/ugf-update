@@ -9,6 +9,10 @@ namespace UGF.Update.Runtime
     {
         private readonly List<TItem> m_items;
 
+        /// <summary>
+        /// Creates update list with the specified update queue.
+        /// </summary>
+        /// <param name="queue">The update queue. (Default value is UpdateQueueSet)</param>
         public UpdateList(IUpdateQueue<TItem> queue = null) : base(new List<TItem>(), queue ?? new UpdateQueueSet<TItem>())
         {
             m_items = (List<TItem>)Collection;

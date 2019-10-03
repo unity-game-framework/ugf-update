@@ -9,6 +9,10 @@ namespace UGF.Update.Runtime
     {
         private readonly HashSet<TItem> m_items;
 
+        /// <summary>
+        /// Creates update set with the specified update queue.
+        /// </summary>
+        /// <param name="queue">The update queue. (Default value is UpdateQueueSet)</param>
         public UpdateSet(IUpdateQueue<TItem> queue = null) : base(new HashSet<TItem>(), queue ?? new UpdateQueueSet<TItem>())
         {
             m_items = (HashSet<TItem>)Collection;

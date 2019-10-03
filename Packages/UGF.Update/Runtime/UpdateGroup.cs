@@ -88,6 +88,10 @@ namespace UGF.Update.Runtime
             }
         }
 
+        /// <summary>
+        /// Removes subgroup by the specified name.
+        /// </summary>
+        /// <param name="groupName">The name of the group to remove.</param>
         public void Remove(string groupName)
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
