@@ -21,10 +21,10 @@ namespace UGF.Update.Runtime
         /// </summary>
         public HashSet<TItem> Remove { get { return m_remove; } }
 
-        ICollection<TItem> IUpdateQueue<TItem>.Add { get { return Add; } }
-        ICollection<TItem> IUpdateQueue<TItem>.Remove { get { return Remove; } }
-        IEnumerable IUpdateQueue.Add { get { return Add; } }
-        IEnumerable IUpdateQueue.Remove { get { return Remove; } }
+        ICollection<TItem> IUpdateQueue<TItem>.Add { get { return m_add; } }
+        ICollection<TItem> IUpdateQueue<TItem>.Remove { get { return m_remove; } }
+        IEnumerable IUpdateQueue.Add { get { return m_add; } }
+        IEnumerable IUpdateQueue.Remove { get { return m_remove; } }
 
         private readonly HashSet<TItem> m_add = new HashSet<TItem>();
         private readonly HashSet<TItem> m_remove = new HashSet<TItem>();

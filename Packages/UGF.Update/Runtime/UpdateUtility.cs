@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine.Experimental.LowLevel;
+using UnityEngine.LowLevel;
 
 namespace UGF.Update.Runtime
 {
@@ -11,6 +11,14 @@ namespace UGF.Update.Runtime
     /// </summary>
     public static class UpdateUtility
     {
+        /// <summary>
+        /// Resets player loop to default.
+        /// </summary>
+        public static void ResetPlayerLoopToDefault()
+        {
+            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+        }
+
         /// <summary>
         /// Tries to add the specified update function into a found subsystem of the specified type from the player loop system.
         /// </summary>
@@ -74,8 +82,8 @@ namespace UGF.Update.Runtime
         /// <param name="insertion">The insertion mode used to create new subsystem relative to found target subsystem.</param>
         public static bool TryAddSubSystem(ref PlayerLoopSystem playerLoop, Type targetSubSystemType, Type subSystemType, UpdateSubSystemInsertion insertion)
         {
-            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (targetSubSystemType == null) throw new ArgumentNullException(nameof(targetSubSystemType));
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 
@@ -258,6 +266,7 @@ namespace UGF.Update.Runtime
         public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (indent == null) throw new ArgumentNullException(nameof(indent));
 
             Type type = playerLoop.type;
 

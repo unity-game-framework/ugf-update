@@ -45,17 +45,6 @@ namespace UGF.Update.Runtime
         void Update();
 
         /// <summary>
-        /// Gets the update collection with casting to the specified type.
-        /// </summary>
-        T GetCollection<T>() where T : IUpdateCollection;
-
-        /// <summary>
-        /// Tries to get the update collection with casting to the specified type.
-        /// </summary>
-        /// <param name="collection">The update collection.</param>
-        bool TryGetCollection<T>(out T collection) where T : IUpdateCollection;
-
-        /// <summary>
         /// Gets subgroup by the specified name.
         /// </summary>
         /// <param name="name">The name of the group.</param>
