@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -109,6 +110,18 @@ namespace UGF.Update.Runtime.Tests
             group2.Update();
 
             Assert.AreEqual(3, target.Counter);
+        }
+
+        [Test]
+        public void UpdateRecursive()
+        {
+            var group = new UpdateGroup<IUpdateGroup>("group", new UpdateListHandler<IUpdateGroup>(item => item.Update()));
+
+            Assert.Throws<ArgumentException>(() => group.Add(group));
+
+            group.Collection.Add(group);
+
+            Assert.Throws<InvalidOperationException>(() => group.Update());
         }
 
         [Test]
