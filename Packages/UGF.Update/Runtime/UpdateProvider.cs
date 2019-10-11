@@ -7,12 +7,13 @@ namespace UGF.Update.Runtime
 {
     public class UpdateProvider : IUpdateProvider
     {
+        public IUpdateLoop UpdateLoop { get; }
         public IReadOnlyDictionary<string, IUpdateGroup> Groups { get; }
 
         private readonly Dictionary<string, IUpdateGroup> m_groups = new Dictionary<string, IUpdateGroup>();
         private readonly Dictionary<string, GroupInfo> m_infos = new Dictionary<string, GroupInfo>();
 
-        private class GroupInfo
+        private struct GroupInfo
         {
             public Type SubSystemType { get; }
             public PlayerLoopSystem.UpdateFunction UpdateFunction { get; }
@@ -24,8 +25,9 @@ namespace UGF.Update.Runtime
             }
         }
 
-        public UpdateProvider()
+        public UpdateProvider(IUpdateLoop updateLoop)
         {
+            UpdateLoop = updateLoop ?? throw new ArgumentNullException(nameof(updateLoop));
             Groups = new ReadOnlyDictionary<string, IUpdateGroup>(m_groups);
         }
 
@@ -35,7 +37,7 @@ namespace UGF.Update.Runtime
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
             if (m_groups.ContainsKey(updateGroup.Name)) throw new ArgumentException($"The update group with the specified name already exist: '{updateGroup.Name}'.", nameof(updateGroup));
 
-            PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
+            PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
             PlayerLoopSystem.UpdateFunction updateFunction = updateGroup.Update;
 
             if (!UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, updateFunction))
@@ -43,7 +45,7 @@ namespace UGF.Update.Runtime
                 throw new ArgumentException($"The specified subsystem type not found in player loop: '{subSystemType}'.", nameof(subSystemType));
             }
 
-            PlayerLoop.SetPlayerLoop(playerLoop);
+            UpdateLoop.SetPlayerLoop(playerLoop);
 
             var info = new GroupInfo(subSystemType, updateFunction);
 
@@ -57,16 +59,38 @@ namespace UGF.Update.Runtime
 
             if (m_groups.Remove(groupName))
             {
-                PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
+                PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
                 GroupInfo info = m_infos[groupName];
 
                 if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, info.SubSystemType, info.UpdateFunction))
                 {
-                    PlayerLoop.SetPlayerLoop(playerLoop);
+                    UpdateLoop.SetPlayerLoop(playerLoop);
                 }
 
                 m_infos.Remove(groupName);
             }
+        }
+
+        public void Clear()
+        {
+            PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
+            bool playerLoopChanged = false;
+
+            foreach (KeyValuePair<string, GroupInfo> pair in m_infos)
+            {
+                if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, pair.Value.SubSystemType, pair.Value.UpdateFunction))
+                {
+                    playerLoopChanged = true;
+                }
+            }
+
+            if (playerLoopChanged)
+            {
+                UpdateLoop.SetPlayerLoop(playerLoop);
+            }
+
+            m_groups.Clear();
+            m_infos.Clear();
         }
 
         public Type GetSubSystemType(string groupName)
@@ -79,6 +103,20 @@ namespace UGF.Update.Runtime
             }
 
             return info.SubSystemType;
+        }
+
+        public bool TryGetSubSystemType(string groupName, out Type type)
+        {
+            if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
+
+            if (m_infos.TryGetValue(groupName, out GroupInfo info))
+            {
+                type = info.SubSystemType;
+                return true;
+            }
+
+            type = null;
+            return false;
         }
 
         public bool TryGetGroup<T>(string groupName, out T updateGroup) where T : IUpdateGroup
