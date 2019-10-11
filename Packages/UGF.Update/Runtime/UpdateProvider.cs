@@ -37,7 +37,7 @@ namespace UGF.Update.Runtime
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
             if (m_groups.ContainsKey(updateGroup.Name)) throw new ArgumentException($"The update group with the specified name already exist: '{updateGroup.Name}'.", nameof(updateGroup));
 
-            PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
+            PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
             PlayerLoopSystem.UpdateFunction updateFunction = updateGroup.Update;
 
             if (!UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, updateFunction))
@@ -59,7 +59,7 @@ namespace UGF.Update.Runtime
 
             if (m_groups.Remove(groupName))
             {
-                PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
+                PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
                 GroupInfo info = m_infos[groupName];
 
                 if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, info.SubSystemType, info.UpdateFunction))
@@ -73,7 +73,7 @@ namespace UGF.Update.Runtime
 
         public void Clear()
         {
-            PlayerLoopSystem playerLoop = UpdateLoop.GetCurrentPlayerLoop();
+            PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
             bool playerLoopChanged = false;
 
             foreach (KeyValuePair<string, GroupInfo> pair in m_infos)

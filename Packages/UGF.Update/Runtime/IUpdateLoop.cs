@@ -4,7 +4,7 @@ namespace UGF.Update.Runtime
 {
     public interface IUpdateLoop
     {
-        PlayerLoopSystem GetCurrentPlayerLoop();
+        PlayerLoopSystem GetPlayerLoop();
         void SetPlayerLoop(PlayerLoopSystem playerLoop);
     }
 }

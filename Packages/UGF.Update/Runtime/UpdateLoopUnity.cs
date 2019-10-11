@@ -4,7 +4,7 @@ namespace UGF.Update.Runtime
 {
     public class UpdateLoopUnity : IUpdateLoop
     {
-        public PlayerLoopSystem GetCurrentPlayerLoop()
+        public PlayerLoopSystem GetPlayerLoop()
         {
             return PlayerLoop.GetCurrentPlayerLoop();
         }

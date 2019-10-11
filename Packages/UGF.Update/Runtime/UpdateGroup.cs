@@ -41,6 +41,8 @@ namespace UGF.Update.Runtime
 
 #if ENABLE_PROFILER
             m_marker = new ProfilerMarker($"UpdateGroup.{Name}");
+#else
+            m_marker = default;
 #endif
         }
 
@@ -55,6 +57,7 @@ namespace UGF.Update.Runtime
         public void Insert(IUpdateGroup group, int index)
         {
             if (group == null) throw new ArgumentNullException(nameof(group));
+            if (index < 0 || index > m_subGroups.Count) throw new ArgumentOutOfRangeException(nameof(index));
 
             if (m_subGroupsByName.ContainsKey(group.Name))
             {
