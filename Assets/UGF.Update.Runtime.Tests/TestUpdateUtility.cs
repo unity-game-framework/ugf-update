@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 using UnityEngine.LowLevel;
 using UnityEngine.TestTools;
@@ -111,12 +113,40 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
-        [UnityTest, Ignore("Not supported by Unity.")]
+        [UnityTest]
         public IEnumerator PlayerLoopNested()
+        {
+            var builder = new StringBuilder();
+            var types = new List<Type>();
+            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            yield return PlayerLoopNestedSubSystems(types, playerLoop);
+
+            for (int i = 0; i < types.Count; i++)
+            {
+                builder.AppendLine(types[i].ToString());
+            }
+
+            Assert.Pass(builder.ToString());
+        }
+
+        private IEnumerator PlayerLoopNestedSubSystems(List<Type> types, PlayerLoopSystem playerLoop)
         {
             using (new TestPlayerLoopScope())
             {
-                yield return TestPlayerLoopUpdate(typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate), 2);
+                yield return TestPlayerLoopUpdatePass(types, playerLoop.type, 5);
+            }
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
+
+            if (subSystems != null)
+            {
+                for (int i = 0; i < subSystems.Length; i++)
+                {
+                    PlayerLoopSystem subSystem = subSystems[i];
+
+                    yield return PlayerLoopNestedSubSystems(types, subSystem);
+                }
             }
         }
 
@@ -550,6 +580,34 @@ namespace UGF.Update.Runtime.Tests
             }
 
             Assert.AreEqual(1, target.Counter);
+        }
+
+        private static IEnumerator TestPlayerLoopUpdatePass(List<Type> types, Type subSystemType, int waitFrames = 1, bool waitForStart = true)
+        {
+            if (waitForStart)
+            {
+                yield return null;
+            }
+
+            PlayerLoopSystem playerLoop = PlayerLoop.GetDefaultPlayerLoop();
+
+            var target = new Target2();
+
+            bool result = UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, target.Update);
+
+            Assert.True(result);
+
+            PlayerLoop.SetPlayerLoop(playerLoop);
+
+            for (int i = 0; i < waitFrames; i++)
+            {
+                yield return null;
+            }
+
+            if (target.Counter > 0)
+            {
+                types.Add(subSystemType);
+            }
         }
     }
 }
