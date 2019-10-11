@@ -7,7 +7,6 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents abstract implementation of the update collection.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     public abstract class UpdateCollection<TItem> : IUpdateCollection<TItem>
     {
         public int Count { get { return Collection.Count; } }
@@ -38,12 +37,16 @@ namespace UGF.Update.Runtime
 
         public void Add(TItem item)
         {
+            if (typeof(TItem).IsClass && EqualityComparer<TItem>.Default.Equals(item, default)) throw new ArgumentNullException(nameof(item));
+
             Queue.Add.Add(item);
             Queue.Remove.Remove(item);
         }
 
         public void Remove(TItem item)
         {
+            if (typeof(TItem).IsClass && EqualityComparer<TItem>.Default.Equals(item, default)) throw new ArgumentNullException(nameof(item));
+
             Queue.Add.Remove(item);
             Queue.Remove.Add(item);
         }
