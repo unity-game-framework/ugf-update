@@ -184,8 +184,7 @@ namespace UGF.Update.Runtime
         public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, IntPtr updateFunction, int index)
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
-            if (index < 0) throw new ArgumentException("The specified index less than zero.");
-            if (playerLoop.subSystemList != null && index > playerLoop.subSystemList.Length) throw new ArgumentException("The specified index more than length of the subsystems.");
+            if (index < 0 || playerLoop.subSystemList != null && index > playerLoop.subSystemList.Length) throw new ArgumentOutOfRangeException(nameof(index));
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 
@@ -220,9 +219,8 @@ namespace UGF.Update.Runtime
         /// <param name="index">The index of the subsystem.</param>
         public static void RemoveSubSystem(ref PlayerLoopSystem playerLoop, int index)
         {
-            if (index < 0) throw new ArgumentException("The specified index less than zero.");
             if (playerLoop.subSystemList == null) throw new ArgumentException("The specified player loop does not contains any subsystems.");
-            if (index >= playerLoop.subSystemList.Length) throw new ArgumentException("The specified index more than length of the subsystems.");
+            if (index < 0 || index > playerLoop.subSystemList.Length) throw new ArgumentOutOfRangeException(nameof(index));
 
             PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
 

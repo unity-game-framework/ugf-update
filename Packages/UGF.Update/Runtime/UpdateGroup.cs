@@ -24,6 +24,7 @@ namespace UGF.Update.Runtime
 
         private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
         private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
+        private bool m_updating;
         private ProfilerMarker m_marker;
 
         /// <summary>
@@ -41,6 +42,8 @@ namespace UGF.Update.Runtime
 
 #if ENABLE_PROFILER
             m_marker = new ProfilerMarker($"UpdateGroup.{Name}");
+#else
+            m_marker = default;
 #endif
         }
 
@@ -55,6 +58,8 @@ namespace UGF.Update.Runtime
         public void Insert(IUpdateGroup group, int index)
         {
             if (group == null) throw new ArgumentNullException(nameof(group));
+            if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
+            if (index < 0 || index > m_subGroups.Count) throw new ArgumentOutOfRangeException(nameof(index));
 
             if (m_subGroupsByName.ContainsKey(group.Name))
             {
@@ -68,6 +73,7 @@ namespace UGF.Update.Runtime
         public void Add(IUpdateGroup group)
         {
             if (group == null) throw new ArgumentNullException(nameof(group));
+            if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
 
             if (m_subGroupsByName.ContainsKey(group.Name))
             {
@@ -105,9 +111,15 @@ namespace UGF.Update.Runtime
 
         public void Update()
         {
+            if (m_updating)
+            {
+                throw new InvalidOperationException("The update group already updating, possible recursive call.");
+            }
+
             if (Enable)
             {
                 m_marker.Begin();
+                m_updating = true;
 
                 Collection.ApplyQueueAndUpdate();
 
@@ -116,6 +128,7 @@ namespace UGF.Update.Runtime
                     m_subGroups[i].Update();
                 }
 
+                m_updating = false;
                 m_marker.End();
             }
         }
