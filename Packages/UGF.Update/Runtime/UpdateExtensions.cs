@@ -8,6 +8,15 @@ namespace UGF.Update.Runtime
     {
         private static readonly char[] m_pathSeparatorDefault = { '.' };
 
+        /// <summary>
+        /// Tries to find collection from the group by the specified path.
+        /// </summary>
+        /// <remarks>
+        /// The path separator is dot. ('.')
+        /// </remarks>
+        /// <param name="updateProvider">The update provider.</param>
+        /// <param name="path">The path of the group to find.</param>
+        /// <param name="collection">The found collection.</param>
         public static bool TryFindCollection<T>(this IUpdateProvider updateProvider, string path, out T collection) where T : IUpdateCollection
         {
             if (updateProvider == null) throw new ArgumentNullException(nameof(updateProvider));
@@ -23,6 +32,15 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Tries to find collection from the group by the specified path.
+        /// </summary>
+        /// <remarks>
+        /// The path separator is dot. ('.')
+        /// </remarks>
+        /// <param name="updateGroup">The update group.</param>
+        /// <param name="path">The path of the group to find.</param>
+        /// <param name="collection">The found collection.</param>
         public static bool TryFindCollection<T>(this IUpdateGroup updateGroup, string path, out T collection) where T : IUpdateCollection
         {
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
@@ -38,6 +56,15 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Tries to find group by the specified path.
+        /// </summary>
+        /// <remarks>
+        /// The path separator is dot. ('.')
+        /// </remarks>
+        /// <param name="updateProvider">The update provider.</param>
+        /// <param name="path">The path of the group to find.</param>
+        /// <param name="group">The found group.</param>
         public static bool TryFindGroup<T>(this IUpdateProvider updateProvider, string path, out T group) where T : IUpdateGroup
         {
             if (updateProvider == null) throw new ArgumentNullException(nameof(updateProvider));
@@ -66,6 +93,15 @@ namespace UGF.Update.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Tries to find group by the specified path.
+        /// </summary>
+        /// <remarks>
+        /// The path separator is dot. ('.')
+        /// </remarks>
+        /// <param name="updateGroup">The update group.</param>
+        /// <param name="path">The path of the group to find.</param>
+        /// <param name="group">The found group.</param>
         public static bool TryFindGroup<T>(this IUpdateGroup updateGroup, string path, out T group) where T : IUpdateGroup
         {
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));

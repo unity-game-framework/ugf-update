@@ -5,6 +5,9 @@ using UnityEngine.LowLevel;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents default implementation of the update provider.
+    /// </summary>
     public class UpdateProvider : IUpdateProvider
     {
         public IUpdateLoop UpdateLoop { get; }
@@ -25,6 +28,10 @@ namespace UGF.Update.Runtime
             }
         }
 
+        /// <summary>
+        /// Creates provider with the specified update loop.
+        /// </summary>
+        /// <param name="updateLoop">The update loop to use.</param>
         public UpdateProvider(IUpdateLoop updateLoop)
         {
             UpdateLoop = updateLoop ?? throw new ArgumentNullException(nameof(updateLoop));

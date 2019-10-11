@@ -2,6 +2,9 @@ using UnityEngine.LowLevel;
 
 namespace UGF.Update.Runtime
 {
+    /// <summary>
+    /// Represents update loop access of the Unity player loop system.
+    /// </summary>
     public class UpdateLoopUnity : IUpdateLoop
     {
         public PlayerLoopSystem GetPlayerLoop()
@@ -14,6 +17,9 @@ namespace UGF.Update.Runtime
             PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
+        /// <summary>
+        /// Resets Unity player loop to default.
+        /// </summary>
         public void Reset()
         {
             UpdateUtility.ResetPlayerLoopToDefault();
