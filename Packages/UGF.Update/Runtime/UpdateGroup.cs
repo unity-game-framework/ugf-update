@@ -13,14 +13,12 @@ namespace UGF.Update.Runtime
     ///
     /// All subgroups stored by the group name which must be unique.
     /// </remarks>
-    public class UpdateGroup<TItem> : IUpdateGroup<TItem>
+    public class UpdateGroup : IUpdateGroup
     {
         public string Name { get; }
         public bool Enable { get; set; } = true;
-        public IUpdateCollection<TItem> Collection { get; }
+        public IUpdateCollection Collection { get; }
         public IReadOnlyList<IUpdateGroup> SubGroups { get; }
-
-        IUpdateCollection IUpdateGroup.Collection { get { return Collection; } }
 
         private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
         private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
@@ -32,7 +30,7 @@ namespace UGF.Update.Runtime
         /// </summary>
         /// <param name="name">The name of the group.</param>
         /// <param name="collection">The update collection.</param>
-        public UpdateGroup(string name, IUpdateCollection<TItem> collection)
+        public UpdateGroup(string name, IUpdateCollection collection)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 

@@ -26,6 +26,12 @@ namespace UGF.Update.Runtime
         void Add(Type subSystemType, IUpdateGroup updateGroup);
 
         /// <summary>
+        /// Removes group.
+        /// </summary>
+        /// <param name="updateGroup">The group to remove.</param>
+        void Remove(IUpdateGroup updateGroup);
+
+        /// <summary>
         /// Removes update group by the specified name.
         /// </summary>
         /// <param name="groupName">The name of the group.</param>
@@ -48,6 +54,12 @@ namespace UGF.Update.Runtime
         /// <param name="groupName">The name of the group.</param>
         /// <param name="type">The found type.</param>
         bool TryGetSubSystemType(string groupName, out Type type);
+
+        /// <summary>
+        /// Gets group by the specified name.
+        /// </summary>
+        /// <param name="groupName">The name of the group.</param>
+        T GetGroup<T>(string groupName) where T : IUpdateGroup;
 
         /// <summary>
         /// Tries to get group by the specified name.

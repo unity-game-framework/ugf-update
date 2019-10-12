@@ -26,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing.
 
+## 3.2.0-preview - 2019-10-12
+- [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.1.0-preview...3.2.0-preview)
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/5?closed=1)
+
+### Added
+- `UpdateGroup` as non-generic implementation.
+- `UpdateProvider`: `GetGroup` by path and `Remove` by group methods.
+
 ## 3.1.0-preview - 2019-10-11
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.0.0-preview...3.1.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/4?closed=1)

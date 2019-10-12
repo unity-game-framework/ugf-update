@@ -60,6 +60,13 @@ namespace UGF.Update.Runtime
             m_infos.Add(updateGroup.Name, info);
         }
 
+        public void Remove(IUpdateGroup updateGroup)
+        {
+            if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
+
+            Remove(updateGroup.Name);
+        }
+
         public void Remove(string groupName)
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
@@ -124,6 +131,18 @@ namespace UGF.Update.Runtime
 
             type = null;
             return false;
+        }
+
+        public T GetGroup<T>(string groupName) where T : IUpdateGroup
+        {
+            if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
+
+            if (!TryGetGroup(groupName, out T group))
+            {
+                throw new ArgumentException($"The group by the specified name not found: '{groupName}'.", nameof(groupName));
+            }
+
+            return group;
         }
 
         public bool TryGetGroup<T>(string groupName, out T updateGroup) where T : IUpdateGroup
