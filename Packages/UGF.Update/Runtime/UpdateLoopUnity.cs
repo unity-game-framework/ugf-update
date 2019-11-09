@@ -17,9 +17,6 @@ namespace UGF.Update.Runtime
             PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
-        /// <summary>
-        /// Resets Unity player loop to default.
-        /// </summary>
         public void Reset()
         {
             UpdateUtility.ResetPlayerLoopToDefault();

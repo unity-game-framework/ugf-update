@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing.
 
+## 3.3.0-preview - 2019-11-09
+- [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.2.0-preview...3.3.0-preview)
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/6?closed=1)
+
+### Added
+- `IUpdateLoop`: `Reset` method to reset current state of the player loop.
+
 ## 3.2.0-preview - 2019-10-12
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.1.0-preview...3.2.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/5?closed=1)

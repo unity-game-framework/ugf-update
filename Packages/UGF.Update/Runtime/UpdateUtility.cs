@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine.LowLevel;
@@ -245,7 +244,7 @@ namespace UGF.Update.Runtime
         /// <param name="playerLoop">The player loop system to print.</param>
         /// <param name="depth">The initial indent depth.</param>
         /// <param name="indent">The indent value used for nested nodes.</param>
-        public static string PrintPlayerLoop(PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
+        public static string PrintPlayerLoop(PlayerLoopSystem playerLoop, int depth = 0, int indent = 4)
         {
             var builder = new StringBuilder();
 
@@ -261,10 +260,10 @@ namespace UGF.Update.Runtime
         /// <param name="playerLoop">The player loop system to print.</param>
         /// <param name="depth">The initial indent depth.</param>
         /// <param name="indent">The indent value used for nested nodes.</param>
-        public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, string indent = "    ")
+        public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, int indent = 4)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (indent == null) throw new ArgumentNullException(nameof(indent));
+            if (indent <= 0) throw new ArgumentOutOfRangeException(nameof(indent));
 
             Type type = playerLoop.type;
 
@@ -272,7 +271,7 @@ namespace UGF.Update.Runtime
                 ? !string.IsNullOrEmpty(type.Namespace) ? $"{type.Namespace}.{type.Name}" : type.Name
                 : "PlayerLoopSystem";
 
-            builder.Append(string.Concat(Enumerable.Repeat(indent, depth)));
+            builder.Append(' ', depth * indent);
             builder.Append(name);
             builder.Append($" (condition: {playerLoop.loopConditionFunction}, updateFunction: {playerLoop.updateFunction})");
             builder.AppendLine();
@@ -283,7 +282,7 @@ namespace UGF.Update.Runtime
 
                 if (invocations.Length > 0)
                 {
-                    builder.Append(string.Concat(Enumerable.Repeat(indent, depth + 1)));
+                    builder.Append(' ', (depth + 1) * indent);
                     builder.Append("Invocations");
                     builder.AppendLine();
 
@@ -293,7 +292,7 @@ namespace UGF.Update.Runtime
                         MethodInfo method = invocation.Method;
                         object target = invocation.Target;
 
-                        builder.Append(string.Concat(Enumerable.Repeat(indent, depth + 2)));
+                        builder.Append(' ', (depth + 2) * indent);
                         builder.Append($"{method.DeclaringType}::{method}");
 
                         if (target != null)
@@ -312,7 +311,7 @@ namespace UGF.Update.Runtime
 
                 if (subSystems.Length > 0)
                 {
-                    builder.Append(string.Concat(Enumerable.Repeat(indent, depth + 1)));
+                    builder.Append(' ', (depth + 1) * indent);
                     builder.Append("SubSystems");
                     builder.AppendLine();
 
