@@ -29,6 +29,10 @@ namespace UGF.Update.Runtime.Tests
             {
                 m_playerLoop = playerLoop;
             }
+
+            public void Reset()
+            {
+            }
         }
 
         private class Group : UpdateGroup<object>

@@ -125,7 +125,7 @@ namespace UGF.Update.Runtime
         /// <param name="playerLoopSystem">The player loop system to print.</param>
         /// <param name="depth">The initial indent depth.</param>
         /// <param name="indent">The indent value used for nested nodes.</param>
-        public static string Print(this PlayerLoopSystem playerLoopSystem, int depth = 0, string indent = "    ")
+        public static string Print(this PlayerLoopSystem playerLoopSystem, int depth = 0, int indent = 4)
         {
             return UpdateUtility.PrintPlayerLoop(playerLoopSystem, depth, indent);
         }

@@ -17,5 +17,10 @@ namespace UGF.Update.Runtime
         /// </summary>
         /// <param name="playerLoop">The player loop to set.</param>
         void SetPlayerLoop(PlayerLoopSystem playerLoop);
+
+        /// <summary>
+        /// Resets Unity player loop to default.
+        /// </summary>
+        void Reset();
     }
 }
