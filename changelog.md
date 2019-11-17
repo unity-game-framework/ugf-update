@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing.
 
+## 3.3.1-preview - 2019-11-17
+- [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.3.0-preview...3.3.1-preview)
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/7?closed=1)
+
+### Fixed
+- `UpdateUtility.PrintPlayerLoop`: fix argument exception when indent is zero.
+
 ## 3.3.0-preview - 2019-11-09
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.2.0-preview...3.3.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/6?closed=1)
