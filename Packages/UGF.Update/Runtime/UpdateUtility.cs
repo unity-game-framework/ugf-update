@@ -263,7 +263,7 @@ namespace UGF.Update.Runtime
         public static void PrintPlayerLoop(StringBuilder builder, PlayerLoopSystem playerLoop, int depth = 0, int indent = 4)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (indent <= 0) throw new ArgumentOutOfRangeException(nameof(indent));
+            if (indent < 0) throw new ArgumentOutOfRangeException(nameof(indent));
 
             Type type = playerLoop.type;
 
