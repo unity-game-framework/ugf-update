@@ -4,8 +4,8 @@ UGF.Update
 
 ## Info
 
-- **Version**: `3.3.1-preview`
-- **Unity**: `2019.3`
+- **Version**: `4.0.0`
+- **Unity**: `2020.1`
 - **API Compatibility Level**: `undefined`
 
 ### Dependencies

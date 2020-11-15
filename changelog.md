@@ -1,46 +1,41 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2019-01-01
-- [Commits](https://github.com/unity-game-framework/ugf-update/compare/0.0.0...0.0.0)
-- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/0?closed=1)
+## [4.0.0](https://github.com/unity-game-framework/ugf-update/releases/tag/4.0.0) - 2020-11-15  
 
-### Added
-- Nothing.
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/8?closed=1)  
+    
 
 ### Changed
-- Nothing.
 
-### Deprecated
-- Nothing.
+- Update to Unity 2020.2 ([#18](https://github.com/unity-game-framework/ugf-update/pull/18))  
+    - Change `TItem` generic constraint for all groups to be a class.
+    - Change find by path extensions to use forward flash (`/`) as separator instead of dot (`.`).
 
-### Removed
-- Nothing.
+## [3.3.1-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/3.3.1-preview) - 2019-11-17  
 
-### Fixed
-- Nothing.
-
-### Security
-- Nothing.
-
-## 3.3.1-preview - 2019-11-17
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.3.0-preview...3.3.1-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/7?closed=1)
 
 ### Fixed
 - `UpdateUtility.PrintPlayerLoop`: fix argument exception when indent is zero.
 
-## 3.3.0-preview - 2019-11-09
+## [3.3.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/3.3.0-preview) - 2019-11-09  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.2.0-preview...3.3.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/6?closed=1)
 
 ### Added
 - `IUpdateLoop`: `Reset` method to reset current state of the player loop.
 
-## 3.2.0-preview - 2019-10-12
+## [3.2.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/3.2.0-preview) - 2019-10-12  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.1.0-preview...3.2.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/5?closed=1)
 
@@ -48,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `UpdateGroup` as non-generic implementation.
 - `UpdateProvider`: `GetGroup` by path and `Remove` by group methods.
 
-## 3.1.0-preview - 2019-10-11
+## [3.1.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/3.1.0-preview) - 2019-10-11  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/3.0.0-preview...3.1.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/4?closed=1)
 
@@ -57,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `IUpdateLoop` interface to control player loop.
 - `TryFindCollection` and `TryFindGroup` extensions for `IUpdateProvider` and `IUpdateGroup` to find group using path.
 
-## 3.0.0-preview - 2019-01-01
+## [3.0.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/3.0.0-preview) - 2019-10-03  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/2.0.0-preview...3.0.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/3?closed=1)
 
@@ -68,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update to Unity 2019.3.
 - Rework update collections and update group.
 
-## 2.0.0-preview - 2019-09-22
+## [2.0.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/2.0.0-preview) - 2019-09-22  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/1.0.0-preview...2.0.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/2?closed=1)
 
@@ -84,12 +82,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update to Unity 2019.2.
 - `UpdateUtility.TryAddSubSystem`: change arguments signature.
 
-## 1.0.0-preview - 2019-07-12
+## [1.0.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/1.0.0-preview) - 2019-07-12  
+
 - [Commits](https://github.com/unity-game-framework/ugf-update/compare/a5288f5...1.0.0-preview)
 - [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/1?closed=1)
 
 ### Added
 - This is a initial release.
 
----
-> Unity Game Framework | Copyright 2019
+
