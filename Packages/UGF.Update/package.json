@@ -1,12 +1,17 @@
 {
-    "name": "com.ugf.update",
-    "displayName": "UGF.Update",
-    "version": "3.3.1-preview",
-    "unity": "2019.3",
-    "description": "Provides utilities to work with PlayerLoop and collections to manager updates.",
-    "author": {
-        "name": "Unity Game Framework",
-        "url": "https://github.com/unity-game-framework"
-    },
-    "dependencies": {}
+  "name": "com.ugf.update",
+  "displayName": "UGF.Update",
+  "version": "3.3.1-preview",
+  "unity": "2019.3",
+  "description": "Provides utilities to work with PlayerLoop and manage update loop.",
+  "author": {
+    "name": "Unity Game Framework",
+    "url": "https://github.com/unity-game-framework"
+  },
+  "dependencies": {},
+  "changelogUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/changelog.md",
+  "licenseUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/license",
+  "repository": {
+    "url": "git://github.com/unity-game-framework/ugf-update.git"
+  }
 }
