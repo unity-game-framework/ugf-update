@@ -6,18 +6,26 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents update collection as ordered list with the specified handler to update each item.
     /// </summary>
-    public class UpdateListHandler<TItem> : UpdateCollection<TItem>
+    public class UpdateListHandler<TItem> : UpdateCollection<TItem> where TItem : class
     {
         public UpdateHandler<TItem> Handler { get; }
 
         private readonly List<TItem> m_items;
 
         /// <summary>
+        /// Creates update list with the specified handler and UpdateQueueSet queue.
+        /// </summary>
+        /// <param name="handler">The handler to update each item.</param>
+        public UpdateListHandler(UpdateHandler<TItem> handler) : this(handler, new UpdateQueueSet<TItem>())
+        {
+        }
+
+        /// <summary>
         /// Creates update list with the specified handler and update queue.
         /// </summary>
         /// <param name="handler">The handler to update each item.</param>
-        /// <param name="queue">The update queue. (Default value is UpdateQueueSet)</param>
-        public UpdateListHandler(UpdateHandler<TItem> handler, IUpdateQueue<TItem> queue = null) : base(new List<TItem>(), queue ?? new UpdateQueueSet<TItem>())
+        /// <param name="queue">The update queue.</param>
+        public UpdateListHandler(UpdateHandler<TItem> handler, IUpdateQueue<TItem> queue) : base(new List<TItem>(), queue)
         {
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 

@@ -7,7 +7,7 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents abstract implementation of the update collection.
     /// </summary>
-    public abstract class UpdateCollection<TItem> : IUpdateCollection<TItem>
+    public abstract class UpdateCollection<TItem> : IUpdateCollection<TItem> where TItem : class
     {
         public int Count { get { return Collection.Count; } }
         public IUpdateQueue<TItem> Queue { get; }
@@ -32,12 +32,14 @@ namespace UGF.Update.Runtime
 
         public bool Contains(TItem item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             return Collection.Contains(item);
         }
 
         public void Add(TItem item)
         {
-            if (typeof(TItem).IsClass && EqualityComparer<TItem>.Default.Equals(item, default)) throw new ArgumentNullException(nameof(item));
+            if (item == null) throw new ArgumentNullException(nameof(item));
 
             Queue.Add.Add(item);
             Queue.Remove.Remove(item);
@@ -45,7 +47,7 @@ namespace UGF.Update.Runtime
 
         public void Remove(TItem item)
         {
-            if (typeof(TItem).IsClass && EqualityComparer<TItem>.Default.Equals(item, default)) throw new ArgumentNullException(nameof(item));
+            if (item == null) throw new ArgumentNullException(nameof(item));
 
             Queue.Add.Remove(item);
             Queue.Remove.Add(item);

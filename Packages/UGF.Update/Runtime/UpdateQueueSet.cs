@@ -9,25 +9,22 @@ namespace UGF.Update.Runtime
     /// </summary>
     public class UpdateQueueSet<TItem> : IUpdateQueue<TItem>
     {
-        public bool AnyQueued { get { return m_add.Count > 0 || m_remove.Count > 0; } }
+        public bool AnyQueued { get { return Add.Count > 0 || Remove.Count > 0; } }
 
         /// <summary>
         /// Gets the collection of the objects queued to add.
         /// </summary>
-        public HashSet<TItem> Add { get { return m_add; } }
+        public HashSet<TItem> Add { get; } = new HashSet<TItem>();
 
         /// <summary>
         /// Gets the collection of the objects queued to remove.
         /// </summary>
-        public HashSet<TItem> Remove { get { return m_remove; } }
+        public HashSet<TItem> Remove { get; } = new HashSet<TItem>();
 
-        ICollection<TItem> IUpdateQueue<TItem>.Add { get { return m_add; } }
-        ICollection<TItem> IUpdateQueue<TItem>.Remove { get { return m_remove; } }
-        IEnumerable IUpdateQueue.Add { get { return m_add; } }
-        IEnumerable IUpdateQueue.Remove { get { return m_remove; } }
-
-        private readonly HashSet<TItem> m_add = new HashSet<TItem>();
-        private readonly HashSet<TItem> m_remove = new HashSet<TItem>();
+        ICollection<TItem> IUpdateQueue<TItem>.Add { get { return Add; } }
+        ICollection<TItem> IUpdateQueue<TItem>.Remove { get { return Remove; } }
+        IEnumerable IUpdateQueue.Add { get { return Add; } }
+        IEnumerable IUpdateQueue.Remove { get { return Remove; } }
 
         public bool Apply(ICollection<TItem> collection)
         {
@@ -35,18 +32,18 @@ namespace UGF.Update.Runtime
 
             if (AnyQueued)
             {
-                foreach (TItem item in m_add)
+                foreach (TItem item in Add)
                 {
                     collection.Add(item);
                 }
 
-                foreach (TItem item in m_remove)
+                foreach (TItem item in Remove)
                 {
                     collection.Remove(item);
                 }
 
-                m_add.Clear();
-                m_remove.Clear();
+                Add.Clear();
+                Remove.Clear();
 
                 return true;
             }

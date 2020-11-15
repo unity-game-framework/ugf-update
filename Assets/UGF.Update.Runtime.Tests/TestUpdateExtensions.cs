@@ -52,9 +52,9 @@ namespace UGF.Update.Runtime.Tests
 
             provider.Add(typeof(UnityEngine.PlayerLoop.Update), group);
 
-            string path0 = "root.one.two.three";
-            string path1 = "root.one.two";
-            string path2 = "root.one";
+            string path0 = "root/one/two/three";
+            string path1 = "root/one/two";
+            string path2 = "root/one";
             string path3 = "root";
             string path4 = "group";
 
@@ -81,8 +81,8 @@ namespace UGF.Update.Runtime.Tests
         {
             Group group = CreateGroups();
 
-            string path0 = "one.two.three";
-            string path1 = "one.two";
+            string path0 = "one/two/three";
+            string path1 = "one/two";
             string path2 = "one";
             string path3 = "root";
 
@@ -109,9 +109,9 @@ namespace UGF.Update.Runtime.Tests
 
             provider.Add(typeof(UnityEngine.PlayerLoop.Update), group);
 
-            string path0 = "root.one.two.three";
-            string path1 = "root.one.two";
-            string path2 = "root.one";
+            string path0 = "root/one/two/three";
+            string path1 = "root/one/two";
+            string path2 = "root/one";
             string path3 = "root";
             string path4 = "group";
 
@@ -142,8 +142,8 @@ namespace UGF.Update.Runtime.Tests
         {
             Group group = CreateGroups();
 
-            string path0 = "one.two.three";
-            string path1 = "one.two";
+            string path0 = "one/two/three";
+            string path1 = "one/two";
             string path2 = "one";
             string path3 = "root";
 

@@ -5,7 +5,7 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents update collection as unordered set of the items where each of them implements 'IUpdateHandler' interface.
     /// </summary>
-    public class UpdateSet<TItem> : UpdateCollection<TItem> where TItem : IUpdateHandler
+    public class UpdateSet<TItem> : UpdateCollection<TItem> where TItem : class, IUpdateHandler
     {
         private readonly HashSet<TItem> m_items;
 
