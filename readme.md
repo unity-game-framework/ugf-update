@@ -6,7 +6,7 @@ UGF.Update
 
 - **Version**: `4.0.0`
 - **Unity**: `2020.1`
-- **API Compatibility Level**: `undefined`
+- **API Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
 
