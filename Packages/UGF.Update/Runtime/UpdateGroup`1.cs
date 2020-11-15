@@ -3,7 +3,7 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents generic implementation of the UpdateGroup.
     /// </summary>
-    public class UpdateGroup<TItem> : UpdateGroup, IUpdateGroup<TItem>
+    public class UpdateGroup<TItem> : UpdateGroup, IUpdateGroup<TItem> where TItem : class
     {
         public new IUpdateCollection<TItem> Collection { get; }
 

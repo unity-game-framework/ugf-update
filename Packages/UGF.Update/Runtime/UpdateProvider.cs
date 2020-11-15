@@ -16,7 +16,7 @@ namespace UGF.Update.Runtime
         private readonly Dictionary<string, IUpdateGroup> m_groups = new Dictionary<string, IUpdateGroup>();
         private readonly Dictionary<string, GroupInfo> m_infos = new Dictionary<string, GroupInfo>();
 
-        private struct GroupInfo
+        private readonly struct GroupInfo
         {
             public Type SubSystemType { get; }
             public PlayerLoopSystem.UpdateFunction UpdateFunction { get; }
@@ -42,14 +42,14 @@ namespace UGF.Update.Runtime
         {
             if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
-            if (m_groups.ContainsKey(updateGroup.Name)) throw new ArgumentException($"The update group with the specified name already exist: '{updateGroup.Name}'.", nameof(updateGroup));
+            if (m_groups.ContainsKey(updateGroup.Name)) throw new ArgumentException($"A group with the same name already exists: '{updateGroup.Name}'.", nameof(updateGroup));
 
             PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
             PlayerLoopSystem.UpdateFunction updateFunction = updateGroup.Update;
 
             if (!UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, updateFunction))
             {
-                throw new ArgumentException($"The specified subsystem type not found in player loop: '{subSystemType}'.", nameof(subSystemType));
+                throw new ArgumentException($"Change update loop failed with the specified subsystem type: '{subSystemType}'.");
             }
 
             UpdateLoop.SetPlayerLoop(playerLoop);
@@ -88,17 +88,17 @@ namespace UGF.Update.Runtime
         public void Clear()
         {
             PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
-            bool playerLoopChanged = false;
+            bool changed = false;
 
             foreach (KeyValuePair<string, GroupInfo> pair in m_infos)
             {
                 if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, pair.Value.SubSystemType, pair.Value.UpdateFunction))
                 {
-                    playerLoopChanged = true;
+                    changed = true;
                 }
             }
 
-            if (playerLoopChanged)
+            if (changed)
             {
                 UpdateLoop.SetPlayerLoop(playerLoop);
             }
@@ -111,12 +111,7 @@ namespace UGF.Update.Runtime
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
 
-            if (!m_infos.TryGetValue(groupName, out GroupInfo info))
-            {
-                throw new ArgumentException($"The group by the specified name not found: '{groupName}'.", nameof(groupName));
-            }
-
-            return info.SubSystemType;
+            return TryGetSubSystemType(groupName, out Type type) ? type : throw new ArgumentException($"Group not found by the specified name: '{groupName}'.", nameof(groupName));
         }
 
         public bool TryGetSubSystemType(string groupName, out Type type)
@@ -137,21 +132,16 @@ namespace UGF.Update.Runtime
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
 
-            if (!TryGetGroup(groupName, out T group))
-            {
-                throw new ArgumentException($"The group by the specified name not found: '{groupName}'.", nameof(groupName));
-            }
-
-            return group;
+            return TryGetGroup(groupName, out T group) ? group : throw new ArgumentException($"Group not found by the specified name: '{group}'.");
         }
 
         public bool TryGetGroup<T>(string groupName, out T updateGroup) where T : IUpdateGroup
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
 
-            if (m_groups.TryGetValue(groupName, out IUpdateGroup value) && value is T cast)
+            if (m_groups.TryGetValue(groupName, out IUpdateGroup value))
             {
-                updateGroup = cast;
+                updateGroup = (T)value;
                 return true;
             }
 

@@ -58,11 +58,7 @@ namespace UGF.Update.Runtime
             if (group == null) throw new ArgumentNullException(nameof(group));
             if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
             if (index < 0 || index > m_subGroups.Count) throw new ArgumentOutOfRangeException(nameof(index));
-
-            if (m_subGroupsByName.ContainsKey(group.Name))
-            {
-                throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
-            }
+            if (m_subGroupsByName.ContainsKey(group.Name)) throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
 
             m_subGroups.Insert(index, group);
             m_subGroupsByName.Add(group.Name, group);
@@ -72,11 +68,7 @@ namespace UGF.Update.Runtime
         {
             if (group == null) throw new ArgumentNullException(nameof(group));
             if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
-
-            if (m_subGroupsByName.ContainsKey(group.Name))
-            {
-                throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
-            }
+            if (m_subGroupsByName.ContainsKey(group.Name)) throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
 
             m_subGroups.Add(group);
             m_subGroupsByName.Add(group.Name, group);
@@ -109,10 +101,7 @@ namespace UGF.Update.Runtime
 
         public void Update()
         {
-            if (m_updating)
-            {
-                throw new InvalidOperationException("The update group already updating, possible recursive call.");
-            }
+            if (m_updating) throw new InvalidOperationException("Update group already updating, possible recursive call.");
 
             if (Enable)
             {
@@ -133,35 +122,23 @@ namespace UGF.Update.Runtime
 
         public T GetSubGroup<T>(string name) where T : IUpdateGroup
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-
-            if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
-            {
-                throw new ArgumentException($"A group by the specified name not found: '{name}'.");
-            }
-
-            return (T)group;
+            return (T)GetSubGroup(name);
         }
 
         public IUpdateGroup GetSubGroup(string name)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
-            if (!m_subGroupsByName.TryGetValue(name, out IUpdateGroup group))
-            {
-                throw new ArgumentException($"A group by the specified name not found: '{name}'.");
-            }
-
-            return group;
+            return m_subGroupsByName.TryGetValue(name, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified name: '{name}'.");
         }
 
         public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
 
-            if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value) && value is T cast)
+            if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value))
             {
-                group = cast;
+                group = (T)value;
                 return true;
             }
 
