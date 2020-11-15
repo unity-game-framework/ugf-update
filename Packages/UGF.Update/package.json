@@ -8,10 +8,17 @@
     "name": "Unity Game Framework",
     "url": "https://github.com/unity-game-framework"
   },
-  "dependencies": {},
-  "changelogUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/changelog.md",
-  "licenseUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/license",
   "repository": {
+    "type": "git",
     "url": "git://github.com/unity-game-framework/ugf-update.git"
-  }
+  },
+  "changelogUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/changelog.md",
+  "licensesUrl": "https://github.com/unity-game-framework/ugf-update/blob/master/license",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@unity-game-framework"
+  },
+  "bintray": {
+    "registry": "https://api.bintray.com/content/unity-game-framework/public"
+  },
+  "dependencies": {}
 }
