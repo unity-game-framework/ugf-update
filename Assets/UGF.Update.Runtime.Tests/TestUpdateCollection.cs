@@ -17,7 +17,7 @@ namespace UGF.Update.Runtime.Tests
         }
     }
 
-    public abstract class TestUpdateCollection<TTarget> where TTarget : ITestTarget
+    public abstract class TestUpdateCollection<TTarget> where TTarget : class, ITestTarget
     {
         protected abstract IUpdateCollection<TTarget> CreateCollection();
         protected abstract TTarget CreateTarget();

@@ -6,14 +6,11 @@ namespace UGF.Update.Runtime
 {
     public static class UpdateExtensions
     {
-        private static readonly char[] m_pathSeparatorDefault = { '.' };
+        private static readonly char[] m_separator = { '/' };
 
         /// <summary>
         /// Tries to find collection from the group by the specified path.
         /// </summary>
-        /// <remarks>
-        /// The path separator is dot. ('.')
-        /// </remarks>
         /// <param name="updateProvider">The update provider.</param>
         /// <param name="path">The path of the group to find.</param>
         /// <param name="collection">The found collection.</param>
@@ -22,9 +19,9 @@ namespace UGF.Update.Runtime
             if (updateProvider == null) throw new ArgumentNullException(nameof(updateProvider));
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            if (TryFindGroup(updateProvider, path, out IUpdateGroup group) && group.Collection is T cast)
+            if (TryFindGroup(updateProvider, path, out IUpdateGroup result))
             {
-                collection = cast;
+                collection = (T)result.Collection;
                 return true;
             }
 
@@ -35,9 +32,6 @@ namespace UGF.Update.Runtime
         /// <summary>
         /// Tries to find collection from the group by the specified path.
         /// </summary>
-        /// <remarks>
-        /// The path separator is dot. ('.')
-        /// </remarks>
         /// <param name="updateGroup">The update group.</param>
         /// <param name="path">The path of the group to find.</param>
         /// <param name="collection">The found collection.</param>
@@ -46,9 +40,9 @@ namespace UGF.Update.Runtime
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            if (TryFindGroup(updateGroup, path, out IUpdateGroup group) && group.Collection is T cast)
+            if (TryFindGroup(updateGroup, path, out IUpdateGroup result))
             {
-                collection = cast;
+                collection = (T)result.Collection;
                 return true;
             }
 
@@ -59,9 +53,6 @@ namespace UGF.Update.Runtime
         /// <summary>
         /// Tries to find group by the specified path.
         /// </summary>
-        /// <remarks>
-        /// The path separator is dot. ('.')
-        /// </remarks>
         /// <param name="updateProvider">The update provider.</param>
         /// <param name="path">The path of the group to find.</param>
         /// <param name="group">The found group.</param>
@@ -70,21 +61,21 @@ namespace UGF.Update.Runtime
             if (updateProvider == null) throw new ArgumentNullException(nameof(updateProvider));
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            string[] split = path.Split(m_pathSeparatorDefault);
+            string[] split = path.Split(m_separator);
 
-            if (split.Length > 0 && updateProvider.Groups.TryGetValue(split[0], out IUpdateGroup updateGroup))
+            if (split.Length > 0 && updateProvider.Groups.TryGetValue(split[0], out IUpdateGroup result))
             {
                 if (split.Length > 1)
                 {
-                    if (TryFindGroup(updateGroup, split, 1, out IUpdateGroup result) && result is T cast)
+                    if (TryFindGroup(result, split, 1, out result))
                     {
-                        group = cast;
+                        group = (T)result;
                         return true;
                     }
                 }
-                else if (updateGroup is T cast)
+                else
                 {
-                    group = cast;
+                    group = (T)result;
                     return true;
                 }
             }
@@ -96,9 +87,6 @@ namespace UGF.Update.Runtime
         /// <summary>
         /// Tries to find group by the specified path.
         /// </summary>
-        /// <remarks>
-        /// The path separator is dot. ('.')
-        /// </remarks>
         /// <param name="updateGroup">The update group.</param>
         /// <param name="path">The path of the group to find.</param>
         /// <param name="group">The found group.</param>
@@ -107,11 +95,11 @@ namespace UGF.Update.Runtime
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            string[] split = path.Split(m_pathSeparatorDefault);
+            string[] split = path.Split(m_separator);
 
-            if (split.Length > 0 && TryFindGroup(updateGroup, split, 0, out IUpdateGroup result) && result is T cast)
+            if (split.Length > 0 && TryFindGroup(updateGroup, split, 0, out IUpdateGroup result))
             {
-                group = cast;
+                group = (T)result;
                 return true;
             }
 

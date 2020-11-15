@@ -5,7 +5,7 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents update collection with the specified type of the item.
     /// </summary>
-    public interface IUpdateCollection<TItem> : IUpdateCollection, IEnumerable<TItem>
+    public interface IUpdateCollection<TItem> : IUpdateCollection, IEnumerable<TItem> where TItem : class
     {
         /// <summary>
         /// Gets the queue of the collection.
