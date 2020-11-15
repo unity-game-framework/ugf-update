@@ -1,3 +1,14 @@
-﻿{
-	"name": "UGF.Update.Runtime"
+{
+    "name": "UGF.Update.Runtime",
+    "rootNamespace": "UGF.Update.Runtime",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
