@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityEngine.LowLevel;
@@ -10,6 +11,8 @@ namespace UGF.Update.Runtime
     /// </summary>
     public static class UpdateUtility
     {
+        private static readonly char[] m_separator = { '/' };
+
         /// <summary>
         /// Resets player loop to default.
         /// </summary>
@@ -238,6 +241,16 @@ namespace UGF.Update.Runtime
             }
         }
 
+        public static bool TryGetSubSystem(PlayerLoopSystem playerLoop, string path, out PlayerLoopSystem subSystem)
+        {
+            if (playerLoop.subSystemList == null) throw new ArgumentException("The specified player loop does not contains any subsystems.");
+            if (string.IsNullOrEmpty(path)) throw new ArgumentException("Value cannot be null or empty.", nameof(path));
+
+            string[] split = path.Split(m_separator);
+
+            return InternalTryGetSubSystem(playerLoop, split, 0, out subSystem);
+        }
+
         /// <summary>
         /// Prints full hierarchy of the specified player loop system as string representation.
         /// </summary>
@@ -360,6 +373,37 @@ namespace UGF.Update.Runtime
                 }
             }
 
+            return false;
+        }
+
+        private static bool InternalTryGetSubSystem(PlayerLoopSystem playerLoop, IReadOnlyList<string> path, int index, out PlayerLoopSystem subSystem)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (path.Count == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(path));
+            if (index < 0 || index >= path.Count) throw new ArgumentOutOfRangeException(nameof(index));
+
+            PlayerLoopSystem[] subSystems = playerLoop.subSystemList;
+            string name = path[index];
+
+            if (subSystems != null)
+            {
+                for (int i = 0; i < subSystems.Length; i++)
+                {
+                    subSystem = subSystems[i];
+
+                    if (subSystem.type != null && subSystem.type.Name == name)
+                    {
+                        if (index == path.Count - 1)
+                        {
+                            return true;
+                        }
+
+                        return InternalTryGetSubSystem(playerLoop, path, ++index, out subSystem);
+                    }
+                }
+            }
+
+            subSystem = default;
             return false;
         }
     }
