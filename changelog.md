@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0](https://github.com/unity-game-framework/ugf-update/releases/tag/5.0.0) - 2020-11-17  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/9?closed=1)  
+    
+
+### Changed
+
+- Extend IUpdateLoop to manage player loop ([#26](https://github.com/unity-game-framework/ugf-update/pull/26))  
+    - Add `IUpdateLoop.Contains`, `Add`, `Remove`, `AddFunction` and `RemoveFunction` methods to change player loop.
+    - Add `UpdateLoopBase` abstract class as default implementation of some methods of `IUpdateLoop` interface.
+    - Change `UpdateLoopUnity` to inherit from `UpdateLoopBase` and implement required members.
+    - Change `UpdateProvider` to work only through `IUpdateLoop` object passed on construction.
+- Remove inheritance of update function pointer when add subsystem ([#25](https://github.com/unity-game-framework/ugf-update/pull/25))  
+    - Add `UpdateUtility.AddSubSystem` without update function argument to add subsystem with empty update function pointer.
+    - Change `UpdateUtility.TryAddSubSystem` to add subsystems without update function pointer inherited from parent.
+
 ## [4.0.0](https://github.com/unity-game-framework/ugf-update/releases/tag/4.0.0) - 2020-11-15  
 
 ### Release Notes
