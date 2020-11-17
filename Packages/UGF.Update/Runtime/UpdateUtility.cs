@@ -241,6 +241,15 @@ namespace UGF.Update.Runtime
             }
         }
 
+        /// <summary>
+        /// Tries to get subsystem by the specified path from the player loop system.
+        /// </summary>
+        /// <remarks>
+        /// The path consist of the type name of subsystem.
+        /// </remarks>
+        /// <param name="playerLoop">The player loop system.</param>
+        /// <param name="path">The path of subsystem to get.</param>
+        /// <param name="subSystem">The found subsystem.</param>
         public static bool TryGetSubSystem(PlayerLoopSystem playerLoop, string path, out PlayerLoopSystem subSystem)
         {
             if (playerLoop.subSystemList == null) throw new ArgumentException("The specified player loop does not contains any subsystems.");
@@ -393,12 +402,10 @@ namespace UGF.Update.Runtime
 
                     if (subSystem.type != null && subSystem.type.Name == name)
                     {
-                        if (index == path.Count - 1)
+                        if (index == path.Count - 1 || InternalTryGetSubSystem(subSystem, path, index + 1, out subSystem))
                         {
                             return true;
                         }
-
-                        return InternalTryGetSubSystem(playerLoop, path, ++index, out subSystem);
                     }
                 }
             }
