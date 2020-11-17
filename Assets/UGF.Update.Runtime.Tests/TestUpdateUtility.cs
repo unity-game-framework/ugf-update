@@ -548,6 +548,64 @@ namespace UGF.Update.Runtime.Tests
         }
 
         [Test]
+        public void TryGetSubSystem()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem
+                            {
+                                type = typeof(PlayerLoops.Update.ScriptRunBehaviourUpdate),
+                                subSystemList = new[]
+                                {
+                                    new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) }
+                                }
+                            }
+                        }
+                    },
+                    new PlayerLoopSystem
+                    {
+                        type = typeof(PlayerLoops.Update),
+                        subSystemList = new[]
+                        {
+                            new PlayerLoopSystem
+                            {
+                                type = typeof(PlayerLoops.Update.ScriptRunDelayedTasks),
+                                subSystemList = new[]
+                                {
+                                    new PlayerLoopSystem
+                                    {
+                                        type = typeof(PlayerLoops.FixedUpdate),
+                                        subSystemList = new[]
+                                        {
+                                            new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) },
+                                            new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) }
+                                        }
+                                    },
+                                    new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) }
+                                }
+                            }
+                        }
+                    },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            bool result1 = UpdateUtility.TryGetSubSystem(playerLoop, "Update/ScriptRunDelayedTasks/FixedUpdate", out PlayerLoopSystem result2);
+
+            Assert.True(result1);
+            Assert.AreEqual(typeof(PlayerLoops.FixedUpdate), result2.type);
+            Assert.AreEqual(2, result2.subSystemList.Length);
+        }
+
+        [Test]
         public void PrintPlayerLoop()
         {
             PlayerLoopSystem playerLoopSystem = PlayerLoop.GetDefaultPlayerLoop();
