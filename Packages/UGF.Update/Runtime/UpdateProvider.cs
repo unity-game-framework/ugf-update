@@ -29,6 +29,13 @@ namespace UGF.Update.Runtime
         }
 
         /// <summary>
+        /// Creates provider with default Unity update loop.
+        /// </summary>
+        public UpdateProvider() : this(new UpdateLoopUnity())
+        {
+        }
+
+        /// <summary>
         /// Creates provider with the specified update loop.
         /// </summary>
         /// <param name="updateLoop">The update loop to use.</param>
