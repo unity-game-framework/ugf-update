@@ -1,3 +1,4 @@
+using System;
 using UnityEngine.LowLevel;
 
 namespace UGF.Update.Runtime
@@ -7,6 +8,12 @@ namespace UGF.Update.Runtime
     /// </summary>
     public interface IUpdateLoop
     {
+        bool Contains(Type systemType);
+        void Add(Type targetSystem, Type systemType, UpdateSubSystemInsertion insertion);
+        bool Remove(Type systemType);
+        void AddFunction(Type systemType, PlayerLoopSystem.UpdateFunction updateFunction);
+        void RemoveFunction(Type systemType, PlayerLoopSystem.UpdateFunction updateFunction);
+
         /// <summary>
         /// Gets current player loop.
         /// </summary>
@@ -19,7 +26,7 @@ namespace UGF.Update.Runtime
         void SetPlayerLoop(PlayerLoopSystem playerLoop);
 
         /// <summary>
-        /// Resets Unity player loop to default.
+        /// Resets player loop to default.
         /// </summary>
         void Reset();
     }
