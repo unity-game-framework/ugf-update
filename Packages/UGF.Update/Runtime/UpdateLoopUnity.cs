@@ -5,19 +5,19 @@ namespace UGF.Update.Runtime
     /// <summary>
     /// Represents update loop access of the Unity player loop system.
     /// </summary>
-    public class UpdateLoopUnity : IUpdateLoop
+    public class UpdateLoopUnity : UpdateLoopBase
     {
-        public PlayerLoopSystem GetPlayerLoop()
+        protected override PlayerLoopSystem OnGetPlayerLoop()
         {
             return PlayerLoop.GetCurrentPlayerLoop();
         }
 
-        public void SetPlayerLoop(PlayerLoopSystem playerLoop)
+        protected override void OnSetPlayerLoop(PlayerLoopSystem playerLoop)
         {
             PlayerLoop.SetPlayerLoop(playerLoop);
         }
 
-        public void Reset()
+        protected override void OnReset()
         {
             UpdateUtility.ResetPlayerLoopToDefault();
         }
