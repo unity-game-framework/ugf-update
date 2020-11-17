@@ -514,7 +514,7 @@ namespace UGF.Update.Runtime.Tests
                 }
             };
 
-            UpdateUtility.AddSubSystem(ref playerLoop, typeof(PlayerLoops.FixedUpdate), IntPtr.Zero, 1);
+            UpdateUtility.AddSubSystem(ref playerLoop, typeof(PlayerLoops.FixedUpdate), 1);
 
             Assert.AreEqual(4, playerLoop.subSystemList.Length);
             Assert.AreEqual(typeof(PlayerLoops.PreUpdate), playerLoop.subSystemList[0].type);
