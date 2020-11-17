@@ -98,17 +98,17 @@ namespace UGF.Update.Runtime
                         {
                             case UpdateSubSystemInsertion.Before:
                             {
-                                AddSubSystem(ref playerLoop, subSystemType, subSystem.updateFunction, i);
+                                AddSubSystem(ref playerLoop, subSystemType, IntPtr.Zero, i);
                                 break;
                             }
                             case UpdateSubSystemInsertion.After:
                             {
-                                AddSubSystem(ref playerLoop, subSystemType, subSystem.updateFunction, i + 1);
+                                AddSubSystem(ref playerLoop, subSystemType, IntPtr.Zero, i + 1);
                                 break;
                             }
                             case UpdateSubSystemInsertion.InsideTop:
                             {
-                                AddSubSystem(ref subSystem, subSystemType, subSystem.updateFunction, 0);
+                                AddSubSystem(ref subSystem, subSystemType, IntPtr.Zero, 0);
 
                                 subSystems[i] = subSystem;
                                 break;
@@ -117,7 +117,7 @@ namespace UGF.Update.Runtime
                             {
                                 int index = subSystem.subSystemList?.Length ?? 0;
 
-                                AddSubSystem(ref subSystem, subSystemType, subSystem.updateFunction, index);
+                                AddSubSystem(ref subSystem, subSystemType, IntPtr.Zero, index);
 
                                 subSystems[i] = subSystem;
                                 break;
@@ -171,6 +171,17 @@ namespace UGF.Update.Runtime
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Adds subsystem with the specified type at the specified index into player loop system.
+        /// </summary>
+        /// <param name="playerLoop">The player loop system to change.</param>
+        /// <param name="subSystemType">The type of the subsystem to add.</param>
+        /// <param name="index">The index of the subsystem.</param>
+        public static void AddSubSystem(ref PlayerLoopSystem playerLoop, Type subSystemType, int index)
+        {
+            AddSubSystem(ref playerLoop, subSystemType, IntPtr.Zero, index);
         }
 
         /// <summary>
