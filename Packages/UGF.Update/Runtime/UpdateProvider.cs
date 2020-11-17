@@ -29,6 +29,13 @@ namespace UGF.Update.Runtime
         }
 
         /// <summary>
+        /// Creates provider with default Unity update loop.
+        /// </summary>
+        public UpdateProvider() : this(new UpdateLoopUnity())
+        {
+        }
+
+        /// <summary>
         /// Creates provider with the specified update loop.
         /// </summary>
         /// <param name="updateLoop">The update loop to use.</param>
@@ -44,17 +51,9 @@ namespace UGF.Update.Runtime
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
             if (m_groups.ContainsKey(updateGroup.Name)) throw new ArgumentException($"A group with the same name already exists: '{updateGroup.Name}'.", nameof(updateGroup));
 
-            PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
-            PlayerLoopSystem.UpdateFunction updateFunction = updateGroup.Update;
+            var info = new GroupInfo(subSystemType, updateGroup.Update);
 
-            if (!UpdateUtility.TryAddUpdateFunction(playerLoop, subSystemType, updateFunction))
-            {
-                throw new ArgumentException($"Change update loop failed with the specified subsystem type: '{subSystemType}'.");
-            }
-
-            UpdateLoop.SetPlayerLoop(playerLoop);
-
-            var info = new GroupInfo(subSystemType, updateFunction);
+            UpdateLoop.AddFunction(subSystemType, info.UpdateFunction);
 
             m_groups.Add(updateGroup.Name, updateGroup);
             m_infos.Add(updateGroup.Name, info);
@@ -73,13 +72,9 @@ namespace UGF.Update.Runtime
 
             if (m_groups.Remove(groupName))
             {
-                PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
                 GroupInfo info = m_infos[groupName];
 
-                if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, info.SubSystemType, info.UpdateFunction))
-                {
-                    UpdateLoop.SetPlayerLoop(playerLoop);
-                }
+                UpdateLoop.RemoveFunction(info.SubSystemType, info.UpdateFunction);
 
                 m_infos.Remove(groupName);
             }
@@ -87,20 +82,9 @@ namespace UGF.Update.Runtime
 
         public void Clear()
         {
-            PlayerLoopSystem playerLoop = UpdateLoop.GetPlayerLoop();
-            bool changed = false;
-
             foreach (KeyValuePair<string, GroupInfo> pair in m_infos)
             {
-                if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, pair.Value.SubSystemType, pair.Value.UpdateFunction))
-                {
-                    changed = true;
-                }
-            }
-
-            if (changed)
-            {
-                UpdateLoop.SetPlayerLoop(playerLoop);
+                UpdateLoop.RemoveFunction(pair.Value.SubSystemType, pair.Value.UpdateFunction);
             }
 
             m_groups.Clear();
