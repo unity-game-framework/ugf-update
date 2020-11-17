@@ -8,30 +8,36 @@ namespace UGF.Update.Runtime.Tests
 {
     public class TestUpdateProvider
     {
-        private class Loop : IUpdateLoop
+        private class Loop : UpdateLoopBase
         {
-            private PlayerLoopSystem m_playerLoop = new PlayerLoopSystem
-            {
-                subSystemList = new[]
-                {
-                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
-                    new PlayerLoopSystem { type = typeof(PlayerLoops.Update) },
-                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
-                }
-            };
+            private PlayerLoopSystem m_playerLoop;
 
-            public PlayerLoopSystem GetPlayerLoop()
+            public Loop()
+            {
+                Reset();
+            }
+
+            protected override PlayerLoopSystem OnGetPlayerLoop()
             {
                 return m_playerLoop;
             }
 
-            public void SetPlayerLoop(PlayerLoopSystem playerLoop)
+            protected override void OnSetPlayerLoop(PlayerLoopSystem playerLoop)
             {
                 m_playerLoop = playerLoop;
             }
 
-            public void Reset()
+            protected override void OnReset()
             {
+                m_playerLoop = new PlayerLoopSystem
+                {
+                    subSystemList = new[]
+                    {
+                        new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                        new PlayerLoopSystem { type = typeof(PlayerLoops.Update) },
+                        new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                    }
+                };
             }
         }
 
