@@ -75,6 +75,21 @@ namespace UGF.Update.Runtime
             return changed;
         }
 
+        bool IUpdateCollection.Contains(object item)
+        {
+            return Contains((TItem)item);
+        }
+
+        void IUpdateCollection.Add(object item)
+        {
+            Add((TItem)item);
+        }
+
+        void IUpdateCollection.Remove(object item)
+        {
+            Remove((TItem)item);
+        }
+
         IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator()
         {
             return Collection.GetEnumerator();
