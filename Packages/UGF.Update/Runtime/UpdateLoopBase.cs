@@ -96,7 +96,11 @@ namespace UGF.Update.Runtime
         {
             PlayerLoopSystem playerLoop = GetPlayerLoop();
 
-            if (!UpdateUtility.TryAddUpdateFunction(playerLoop, systemType, updateFunction))
+            if (UpdateUtility.TryAddUpdateFunction(playerLoop, systemType, updateFunction))
+            {
+                SetPlayerLoop(playerLoop);
+            }
+            else
             {
                 throw new ArgumentException($"Adding update function failed by the specified system type: '{systemType}'.");
             }
@@ -106,7 +110,11 @@ namespace UGF.Update.Runtime
         {
             PlayerLoopSystem playerLoop = GetPlayerLoop();
 
-            if (!UpdateUtility.TryRemoveUpdateFunction(playerLoop, systemType, updateFunction))
+            if (UpdateUtility.TryRemoveUpdateFunction(playerLoop, systemType, updateFunction))
+            {
+                SetPlayerLoop(playerLoop);
+            }
+            else
             {
                 throw new AggregateException($"Removing update function failed by the specified system type: '{systemType}'.");
             }
