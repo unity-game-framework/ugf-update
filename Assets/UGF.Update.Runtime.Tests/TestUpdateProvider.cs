@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine.LowLevel;
+using UnityEngine.TestTools;
 using PlayerLoops = UnityEngine.PlayerLoop;
 
 namespace UGF.Update.Runtime.Tests
@@ -48,6 +50,16 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
+        private class Target : IUpdateHandler
+        {
+            public int Counter { get; protected set; }
+
+            public void OnUpdate()
+            {
+                Counter++;
+            }
+        }
+
         [Test]
         public void Add()
         {
@@ -59,6 +71,30 @@ namespace UGF.Update.Runtime.Tests
             Assert.True(provider.Groups.ContainsKey("group"));
             Assert.NotNull(provider.UpdateLoop.GetPlayerLoop().subSystemList[1].updateDelegate);
             Assert.True(provider.UpdateLoop.GetPlayerLoop().subSystemList[1].updateDelegate.GetInvocationList().Any(x => x.Target == group));
+        }
+
+        [UnityTest]
+        public IEnumerator AddUnity()
+        {
+            var provider = new UpdateProvider();
+            var group = new UpdateGroup<IUpdateHandler>("group", new UpdateList<IUpdateHandler>());
+            var target = new Target();
+
+            provider.Add(typeof(PlayerLoops.Update), group);
+            group.Collection.Add(target);
+
+            Assert.True(provider.Groups.ContainsKey("group"));
+            Assert.NotNull(provider.UpdateLoop.GetPlayerLoop().subSystemList[5].updateDelegate);
+            Assert.True(provider.UpdateLoop.GetPlayerLoop().subSystemList[5].updateDelegate.GetInvocationList().Any(x => x.Target == group));
+
+            yield return null;
+
+            Assert.AreEqual(1, target.Counter);
+
+            provider.Remove(group);
+
+            Assert.False(provider.Groups.ContainsKey("group"));
+            Assert.Null(provider.UpdateLoop.GetPlayerLoop().subSystemList[5].updateDelegate);
         }
 
         [Test]
