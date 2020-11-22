@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0](https://github.com/unity-game-framework/ugf-update/releases/tag/5.1.0) - 2020-11-22  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/10?closed=1)  
+    
+
+### Added
+
+- Add IUpdateCollection add and remove methods ([#31](https://github.com/unity-game-framework/ugf-update/pull/31))  
+    - Add `IUpdateCollection.Add`, `Remove` and `Contains` methods.
+
+### Fixed
+
+- Fix UpdateLoop update function change has no effect ([#30](https://github.com/unity-game-framework/ugf-update/pull/30))  
+    - Fix `UpdateLoopBase` does not apply update function changes into player loop.
+
 ## [5.0.0](https://github.com/unity-game-framework/ugf-update/releases/tag/5.0.0) - 2020-11-17  
 
 ### Release Notes
