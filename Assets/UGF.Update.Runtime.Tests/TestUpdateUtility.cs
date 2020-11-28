@@ -11,9 +11,13 @@ namespace UGF.Update.Runtime.Tests
 {
     public class TestUpdateUtility
     {
-        private class Target
+        private class Target : IUpdateHandler
         {
             public void Update()
+            {
+            }
+
+            void IUpdateHandler.OnUpdate()
             {
             }
         }
@@ -555,6 +559,96 @@ namespace UGF.Update.Runtime.Tests
             string result = UpdateUtility.PrintPlayerLoop(playerLoopSystem);
 
             Assert.Pass(result);
+        }
+
+        [Test]
+        public void PrintPlayerLoopWithGroups()
+        {
+            var playerLoop = new PlayerLoopSystem
+            {
+                subSystemList = new[]
+                {
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PreUpdate) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.FixedUpdate) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.Update) },
+                    new PlayerLoopSystem { type = typeof(PlayerLoops.PostLateUpdate) }
+                }
+            };
+
+            var group = new UpdateGroup<Target>("Group Root", new UpdateSet<Target>());
+
+            group.Collection.Add(new Target());
+            group.Collection.Add(new Target());
+
+            group.Collection.ApplyQueue();
+
+            group.Collection.Add(new Target());
+            group.Collection.Add(new Target());
+            group.Collection.Remove(new Target());
+
+            var subGroup = new UpdateGroup<Target>("Group0", new UpdateSet<Target>());
+
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+
+            subGroup.Collection.ApplyQueue();
+
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Remove(new Target());
+
+            subGroup.Add(new UpdateGroup<Target>("Group Child 0", new UpdateSet<Target>()));
+            subGroup.Add(new UpdateGroup<Target>("Group Child 1", new UpdateSet<Target>()));
+            subGroup.Add(new UpdateGroup<Target>("Group Child 2", new UpdateSet<Target>()));
+
+            group.Add(subGroup);
+            group.Add(new UpdateGroup<Target>("Group1", new UpdateSet<Target>()));
+            group.Add(new UpdateGroup<Target>("Group2", new UpdateSet<Target>()));
+            group.Add(new UpdateGroup<Target>("Group3", new UpdateSet<Target>()));
+
+            bool result0 = UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.Update), group.Update);
+
+            Assert.True(result0);
+            Assert.Pass(playerLoop.Print());
+        }
+
+        [Test]
+        public void PrintUpdateGroup()
+        {
+            var group = new UpdateGroup<Target>("Group Root", new UpdateSet<Target>());
+
+            group.Collection.Add(new Target());
+            group.Collection.Add(new Target());
+
+            group.Collection.ApplyQueue();
+
+            group.Collection.Add(new Target());
+            group.Collection.Add(new Target());
+            group.Collection.Remove(new Target());
+
+            var subGroup = new UpdateGroup<Target>("Group0", new UpdateSet<Target>());
+
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+
+            subGroup.Collection.ApplyQueue();
+
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Add(new Target());
+            subGroup.Collection.Remove(new Target());
+
+            subGroup.Add(new UpdateGroup<Target>("Group Child 0", new UpdateSet<Target>()));
+            subGroup.Add(new UpdateGroup<Target>("Group Child 1", new UpdateSet<Target>()));
+            subGroup.Add(new UpdateGroup<Target>("Group Child 2", new UpdateSet<Target>()));
+
+            group.Add(subGroup);
+            group.Add(new UpdateGroup<Target>("Group1", new UpdateSet<Target>()));
+            group.Add(new UpdateGroup<Target>("Group2", new UpdateSet<Target>()));
+            group.Add(new UpdateGroup<Target>("Group3", new UpdateSet<Target>()));
+
+            Assert.Pass(group.Print());
         }
 
         private static IEnumerator TestPlayerLoopUpdate(Type subSystemType, int waitFrames = 1, bool waitForStart = true)
