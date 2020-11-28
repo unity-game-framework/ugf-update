@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0](https://github.com/unity-game-framework/ugf-update/releases/tag/5.2.0) - 2020-11-28  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/11?closed=1)  
+    
+
+### Added
+
+- Add player loop print to display nested update groups ([#35](https://github.com/unity-game-framework/ugf-update/pull/35))  
+    - Add `UpdateUtility.PrintUpdateGroup` to print full hierarchy of subgroups, update collection, add and remove queue.
+    - Add `IUpdateGroup.Print` extension method as shortcut for `UpdateUtility.PrintUpdateGroup` method.
+
 ## [5.1.0](https://github.com/unity-game-framework/ugf-update/releases/tag/5.1.0) - 2020-11-22  
 
 ### Release Notes
