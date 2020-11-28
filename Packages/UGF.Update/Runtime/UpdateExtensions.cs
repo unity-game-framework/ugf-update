@@ -118,6 +118,17 @@ namespace UGF.Update.Runtime
             return UpdateUtility.PrintPlayerLoop(playerLoopSystem, depth, indent);
         }
 
+        /// <summary>
+        /// Prints full hierarchy of subgroups for the specified update group, items of the update collection, add and remove queue of items.
+        /// </summary>
+        /// <param name="group">The update group to print.</param>
+        /// <param name="depth">The initial indent depth.</param>
+        /// <param name="indent">The indent value used for nested nodes.</param>
+        public static string Print(this IUpdateGroup group, int depth = 0, int indent = 4)
+        {
+            return UpdateUtility.PrintUpdateGroup(group, depth, indent);
+        }
+
         private static bool TryFindGroup(IUpdateGroup updateGroup, IReadOnlyList<string> path, int index, out IUpdateGroup group)
         {
             if (updateGroup == null) throw new ArgumentNullException(nameof(updateGroup));
