@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine.LowLevel;
@@ -309,9 +310,17 @@ namespace UGF.Update.Runtime
                         if (target != null)
                         {
                             builder.Append($" ({target})");
-                        }
+                            builder.AppendLine();
 
-                        builder.AppendLine();
+                            if (target is IUpdateGroup group)
+                            {
+                                PrintUpdateGroup(builder, group, depth + 3, indent);
+                            }
+                        }
+                        else
+                        {
+                            builder.AppendLine();
+                        }
                     }
                 }
             }
@@ -332,6 +341,97 @@ namespace UGF.Update.Runtime
 
                         PrintPlayerLoop(builder, subSystem, depth + 2, indent);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Prints full hierarchy of subgroups for the specified update group, items of the update collection, add and remove queue of items.
+        /// </summary>
+        /// <param name="group">The update group to print.</param>
+        /// <param name="depth">The initial indent depth.</param>
+        /// <param name="indent">The indent value used for nested nodes.</param>
+        public static string PrintUpdateGroup(IUpdateGroup group, int depth = 0, int indent = 4)
+        {
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
+            var builder = new StringBuilder();
+
+            PrintUpdateGroup(builder, group, depth, indent);
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Prints full hierarchy of subgroups for the specified update group, items of the update collection, add and remove queue of items.
+        /// </summary>
+        /// <param name="builder">The builder used to construct string.</param>
+        /// <param name="group">The update group to print.</param>
+        /// <param name="depth">The initial indent depth.</param>
+        /// <param name="indent">The indent value used for nested nodes.</param>
+        public static void PrintUpdateGroup(StringBuilder builder, IUpdateGroup group, int depth = 0, int indent = 4)
+        {
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (group == null) throw new ArgumentNullException(nameof(group));
+            if (indent < 0) throw new ArgumentOutOfRangeException(nameof(indent));
+
+            builder.Append(' ', depth * indent);
+            builder.Append($"{group.Name} (enabled: {group.Enable})");
+            builder.AppendLine();
+
+            if (group.Collection.Count > 0)
+            {
+                builder.Append(' ', (depth + 1) * indent);
+                builder.Append($"Collection (count: {group.Collection.Count})");
+                builder.AppendLine();
+
+                foreach (object element in group.Collection)
+                {
+                    builder.Append(' ', (depth + 2) * indent);
+                    builder.Append($"{element}");
+                    builder.AppendLine();
+                }
+            }
+
+            if (group.Collection.Queue.Add.Cast<object>().Any())
+            {
+                builder.Append(' ', (depth + 1) * indent);
+                builder.Append($"Queue Add (count: {group.Collection.Queue.Add.Cast<object>().Count()})");
+                builder.AppendLine();
+
+                foreach (object element in group.Collection.Queue.Add)
+                {
+                    builder.Append(' ', (depth + 2) * indent);
+                    builder.Append($"{element}");
+                    builder.AppendLine();
+                }
+            }
+
+            if (group.Collection.Queue.Remove.Cast<object>().Any())
+            {
+                builder.Append(' ', (depth + 1) * indent);
+                builder.Append($"Queue Remove (count: {group.Collection.Queue.Remove.Cast<object>().Count()})");
+                builder.AppendLine();
+
+                foreach (object element in group.Collection.Queue.Remove)
+                {
+                    builder.Append(' ', (depth + 2) * indent);
+                    builder.Append($"{element}");
+                    builder.AppendLine();
+                }
+            }
+
+            if (group.SubGroups.Count > 0)
+            {
+                builder.Append(' ', (depth + 1) * indent);
+                builder.Append("SubGroups");
+                builder.AppendLine();
+
+                for (int i = 0; i < group.SubGroups.Count; i++)
+                {
+                    IUpdateGroup subGroup = group.SubGroups[i];
+
+                    PrintUpdateGroup(builder, subGroup, depth + 2, indent);
                 }
             }
         }
