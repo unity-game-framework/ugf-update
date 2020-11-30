@@ -376,7 +376,7 @@ namespace UGF.Update.Runtime
             if (indent < 0) throw new ArgumentOutOfRangeException(nameof(indent));
 
             builder.Append(' ', depth * indent);
-            builder.Append($"{group.Name} (enabled: {group.Enable})");
+            builder.Append($"{group.GetType()} (enabled: {group.Enable}, name: {group.Name})");
             builder.AppendLine();
 
             if (group.Collection.Count > 0)
