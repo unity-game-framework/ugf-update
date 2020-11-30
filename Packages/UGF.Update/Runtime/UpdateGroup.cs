@@ -39,7 +39,7 @@ namespace UGF.Update.Runtime
             SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
 
 #if ENABLE_PROFILER
-            m_marker = new ProfilerMarker($"UpdateGroup.{Name}");
+            m_marker = new ProfilerMarker($"{GetType()} ({Name})");
 #else
             m_marker = default;
 #endif
