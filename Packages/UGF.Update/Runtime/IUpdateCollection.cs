@@ -46,11 +46,6 @@ namespace UGF.Update.Runtime
         bool ApplyQueue();
 
         /// <summary>
-        /// Applies queue and updates collection.
-        /// </summary>
-        bool ApplyQueueAndUpdate();
-
-        /// <summary>
         /// Clears queue and collection.
         /// </summary>
         void Clear();

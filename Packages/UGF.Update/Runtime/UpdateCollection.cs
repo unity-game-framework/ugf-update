@@ -71,15 +71,6 @@ namespace UGF.Update.Runtime
             return Queue.Apply(Collection);
         }
 
-        public bool ApplyQueueAndUpdate()
-        {
-            bool changed = ApplyQueue();
-
-            Update();
-
-            return changed;
-        }
-
         bool IUpdateCollection.Contains(object item)
         {
             return Contains((TItem)item);
