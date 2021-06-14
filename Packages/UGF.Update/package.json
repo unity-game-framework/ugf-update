@@ -2,7 +2,7 @@
   "name": "com.ugf.update",
   "displayName": "UGF.Update",
   "version": "5.2.1",
-  "unity": "2020.2",
+  "unity": "2021.1",
   "apiCompatibility": ".NET Standard 2.0",
   "description": "Provides utilities to work with PlayerLoop and manage update loop.",
   "author": {
