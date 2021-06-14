@@ -45,12 +45,17 @@ namespace UGF.Update.Runtime
             Queue.Remove.Remove(item);
         }
 
-        public void Remove(TItem item)
+        public bool Remove(TItem item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            Queue.Add.Remove(item);
-            Queue.Remove.Add(item);
+            if (Queue.Add.Remove(item))
+            {
+                Queue.Remove.Add(item);
+                return true;
+            }
+
+            return false;
         }
 
         public void Clear()
@@ -85,9 +90,9 @@ namespace UGF.Update.Runtime
             Add((TItem)item);
         }
 
-        void IUpdateCollection.Remove(object item)
+        bool IUpdateCollection.Remove(object item)
         {
-            Remove((TItem)item);
+            return Remove((TItem)item);
         }
 
         IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator()
