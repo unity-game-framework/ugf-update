@@ -8,8 +8,13 @@ namespace UGF.Update.Runtime.Tests
     {
         private class Group : UpdateGroup<Target>
         {
-            public Group(string name) : base(name, new UpdateSet<Target>())
+            public string Name { get; }
+
+            public Group(string name) : base(new UpdateSet<Target>())
             {
+                if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+
+                Name = name;
             }
         }
 
@@ -21,18 +26,6 @@ namespace UGF.Update.Runtime.Tests
             {
                 Counter++;
             }
-        }
-
-        [Test]
-        public void Insert()
-        {
-            var group = new Group("group_1");
-            var group2 = new Group("group_2");
-
-            group.Insert(group2, 0);
-
-            Assert.AreEqual(1, group.SubGroups.Count);
-            Assert.True(group.SubGroups.Contains(group2));
         }
 
         [Test]
