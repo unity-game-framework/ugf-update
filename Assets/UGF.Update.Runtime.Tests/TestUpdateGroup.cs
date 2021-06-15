@@ -35,6 +35,7 @@ namespace UGF.Update.Runtime.Tests
             var target = new Target();
 
             group.SubGroups.Add(group2);
+            group.SubGroups.ApplyQueue();
             group2.Collection.Add(target);
 
             Assert.True(group.SubGroups.Contains(group2));
@@ -67,8 +68,6 @@ namespace UGF.Update.Runtime.Tests
         public void UpdateRecursive()
         {
             var group = new UpdateGroup<IUpdateGroup>(new UpdateListHandler<IUpdateGroup>(item => item.Update()));
-
-            Assert.Throws<ArgumentException>(() => group.SubGroups.Add(group));
 
             group.Collection.Add(group);
 
