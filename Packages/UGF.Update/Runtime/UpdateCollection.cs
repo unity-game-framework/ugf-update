@@ -49,13 +49,10 @@ namespace UGF.Update.Runtime
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            if (Queue.Add.Remove(item))
-            {
-                Queue.Remove.Add(item);
-                return true;
-            }
+            Queue.Add.Remove(item);
+            Queue.Remove.Add(item);
 
-            return false;
+            return true;
         }
 
         public void Clear()
