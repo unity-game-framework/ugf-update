@@ -1,7 +1,9 @@
 {
     "name": "UGF.Update.Runtime.Tests",
+    "rootNamespace": "",
     "references": [
         "GUID:5169d14ee2338b849b1b9682417a2532",
+        "GUID:16fde9420ef50f34db61e711e19381dd",
         "GUID:27619889b8ba8c24980f49ee34dbb44a"
     ],
     "includePlatforms": [],
@@ -15,5 +17,6 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

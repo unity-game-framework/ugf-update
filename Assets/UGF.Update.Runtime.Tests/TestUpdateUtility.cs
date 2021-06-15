@@ -575,7 +575,7 @@ namespace UGF.Update.Runtime.Tests
                 }
             };
 
-            var group = new UpdateGroup<Target>("Group Root", new UpdateSet<Target>());
+            var group = new UpdateGroup<Target>(new UpdateSet<Target>());
 
             group.Collection.Add(new Target());
             group.Collection.Add(new Target());
@@ -586,7 +586,7 @@ namespace UGF.Update.Runtime.Tests
             group.Collection.Add(new Target());
             group.Collection.Remove(new Target());
 
-            var subGroup = new UpdateGroup<Target>("Group0", new UpdateSet<Target>());
+            var subGroup = new UpdateGroup<Target>(new UpdateSet<Target>());
 
             subGroup.Collection.Add(new Target());
             subGroup.Collection.Add(new Target());
@@ -598,14 +598,14 @@ namespace UGF.Update.Runtime.Tests
             subGroup.Collection.Add(new Target());
             subGroup.Collection.Remove(new Target());
 
-            subGroup.Add(new UpdateGroup<Target>("Group Child 0", new UpdateSet<Target>()));
-            subGroup.Add(new UpdateGroup<Target>("Group Child 1", new UpdateSet<Target>()));
-            subGroup.Add(new UpdateGroup<Target>("Group Child 2", new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
 
-            group.Add(subGroup);
-            group.Add(new UpdateGroup<Target>("Group1", new UpdateSet<Target>()));
-            group.Add(new UpdateGroup<Target>("Group2", new UpdateSet<Target>()));
-            group.Add(new UpdateGroup<Target>("Group3", new UpdateSet<Target>()));
+            group.SubGroups.Add(subGroup);
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
 
             bool result0 = UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.Update), group.Update);
 
@@ -616,7 +616,7 @@ namespace UGF.Update.Runtime.Tests
         [Test]
         public void PrintUpdateGroup()
         {
-            var group = new UpdateGroup<Target>("Group Root", new UpdateSet<Target>());
+            var group = new UpdateGroup<Target>(new UpdateSet<Target>());
 
             group.Collection.Add(new Target());
             group.Collection.Add(new Target());
@@ -627,7 +627,7 @@ namespace UGF.Update.Runtime.Tests
             group.Collection.Add(new Target());
             group.Collection.Remove(new Target());
 
-            var subGroup = new UpdateGroup<Target>("Group0", new UpdateSet<Target>());
+            var subGroup = new UpdateGroup<Target>(new UpdateSet<Target>());
 
             subGroup.Collection.Add(new Target());
             subGroup.Collection.Add(new Target());
@@ -639,14 +639,14 @@ namespace UGF.Update.Runtime.Tests
             subGroup.Collection.Add(new Target());
             subGroup.Collection.Remove(new Target());
 
-            subGroup.Add(new UpdateGroup<Target>("Group Child 0", new UpdateSet<Target>()));
-            subGroup.Add(new UpdateGroup<Target>("Group Child 1", new UpdateSet<Target>()));
-            subGroup.Add(new UpdateGroup<Target>("Group Child 2", new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            subGroup.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
 
-            group.Add(subGroup);
-            group.Add(new UpdateGroup<Target>("Group1", new UpdateSet<Target>()));
-            group.Add(new UpdateGroup<Target>("Group2", new UpdateSet<Target>()));
-            group.Add(new UpdateGroup<Target>("Group3", new UpdateSet<Target>()));
+            group.SubGroups.Add(subGroup);
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
+            group.SubGroups.Add(new UpdateGroup<Target>(new UpdateSet<Target>()));
 
             Assert.Pass(group.Print());
         }
