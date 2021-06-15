@@ -8,6 +8,10 @@ namespace UGF.Update.Runtime
     {
         public IUpdateLoop UpdateLoop { get; }
 
+        public UpdateProvider() : this(new UpdateLoopUnity())
+        {
+        }
+
         public UpdateProvider(IUpdateLoop updateLoop)
         {
             UpdateLoop = updateLoop ?? throw new ArgumentNullException(nameof(updateLoop));
