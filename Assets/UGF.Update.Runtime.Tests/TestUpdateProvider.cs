@@ -71,7 +71,7 @@ namespace UGF.Update.Runtime.Tests
             var provider = new UpdateProvider(new Loop());
             var group = new Group("group");
 
-            provider.Add(typeof(PlayerLoops.Update), group);
+            provider.AddWithSubSystemType(group, typeof(PlayerLoops.Update));
 
             Assert.True(provider.Entries.ContainsKey(group));
             Assert.NotNull(provider.UpdateLoop.GetPlayerLoop().subSystemList[1].updateDelegate);
@@ -85,7 +85,7 @@ namespace UGF.Update.Runtime.Tests
             var group = new UpdateGroup<IUpdateHandler>(new UpdateList<IUpdateHandler>());
             var target = new Target();
 
-            provider.Add(typeof(PlayerLoops.Update), group);
+            provider.AddWithSubSystemType(group, typeof(PlayerLoops.Update));
             group.Collection.Add(target);
 
             Assert.True(provider.Entries.ContainsKey(group));
@@ -108,7 +108,7 @@ namespace UGF.Update.Runtime.Tests
             var provider = new UpdateProvider(new Loop());
             var group = new Group("group");
 
-            provider.Add(typeof(PlayerLoops.Update), group);
+            provider.AddWithSubSystemType(group, typeof(PlayerLoops.Update));
 
             Assert.True(provider.Entries.ContainsKey(group));
             Assert.NotNull(provider.UpdateLoop.GetPlayerLoop().subSystemList[1].updateDelegate);
@@ -128,8 +128,8 @@ namespace UGF.Update.Runtime.Tests
             var group1 = new Group("group1");
             var group2 = new Group("group2");
 
-            provider.Add(typeof(PlayerLoops.PreUpdate), group1);
-            provider.Add(typeof(PlayerLoops.Update), group2);
+            provider.AddWithSubSystemType(group1, typeof(PlayerLoops.PreUpdate));
+            provider.AddWithSubSystemType(group2, typeof(PlayerLoops.Update));
 
             Assert.AreEqual(2, provider.Entries.Count);
             Assert.True(provider.Entries.ContainsKey(group1));
