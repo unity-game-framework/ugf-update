@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0-preview](https://github.com/unity-game-framework/ugf-update/releases/tag/6.0.0-preview) - 2021-06-16  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/13?closed=1)  
+    
+
+### Changed
+
+- Rework update collection, group and provider ([#42](https://github.com/unity-game-framework/ugf-update/pull/42))  
+    - Update package Unity version to `2021.1`.
+    - Update dependencies: add `com.ugf.runtimetools` of `2.0.0` version.
+    - Change `IUpdateGroup` to store subgroups in update collection and remove name property and all relative get subgroup methods.
+    - Change `IUpdateProvider` to implement provider from runtime tools and store update function by update group as key.
+    - Change `IUpdateCollection.Remove` method to return boolean value.
+    - Remove `IUpdateCollection.ApplyQueueAndUpdate()` method, replaced by extension method.
+    - Remove find collection and subgroup by path extension methods.
+
 ## [5.2.1](https://github.com/unity-game-framework/ugf-update/releases/tag/5.2.1) - 2020-11-30  
 
 ### Release Notes
