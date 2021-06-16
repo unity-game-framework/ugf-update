@@ -1,7 +1,9 @@
 {
     "name": "UGF.Update.Runtime",
     "rootNamespace": "UGF.Update.Runtime",
-    "references": [],
+    "references": [
+        "GUID:16fde9420ef50f34db61e711e19381dd"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

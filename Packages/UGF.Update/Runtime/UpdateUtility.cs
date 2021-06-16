@@ -376,7 +376,7 @@ namespace UGF.Update.Runtime
             if (indent < 0) throw new ArgumentOutOfRangeException(nameof(indent));
 
             builder.Append(' ', depth * indent);
-            builder.Append($"{group.GetType()} (enabled: {group.Enable}, name: {group.Name})");
+            builder.Append($"{group.GetType()} (enabled: {group.Enable})");
             builder.AppendLine();
 
             if (group.Collection.Count > 0)
@@ -427,10 +427,8 @@ namespace UGF.Update.Runtime
                 builder.Append("SubGroups");
                 builder.AppendLine();
 
-                for (int i = 0; i < group.SubGroups.Count; i++)
+                foreach (IUpdateGroup subGroup in group.SubGroups)
                 {
-                    IUpdateGroup subGroup = group.SubGroups[i];
-
                     PrintUpdateGroup(builder, subGroup, depth + 2, indent);
                 }
             }

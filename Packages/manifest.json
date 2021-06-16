@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "com.unity.ide.rider": "3.0.2",
-    "com.unity.test-framework": "1.1.18"
+    "com.unity.ide.rider": "3.0.7",
+    "com.unity.test-framework": "1.1.26"
   },
   "scopedRegistries": [
     {
-      "name": "ugf",
-      "url": "https://api.bintray.com/npm/unity-game-framework/public",
+      "name": "Unity Game Framework",
+      "url": "https://unitygameframework.jfrog.io/artifactory/api/npm/default",
       "scopes": [
         "com.ugf"
       ]

@@ -28,6 +28,6 @@ namespace UGF.Update.Runtime
         /// Adds the specified item to remove queue.
         /// </summary>
         /// <param name="item">The item to add.</param>
-        void Remove(TItem item);
+        bool Remove(TItem item);
     }
 }

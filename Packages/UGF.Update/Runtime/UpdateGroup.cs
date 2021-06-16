@@ -1,102 +1,31 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Unity.Profiling;
 
 namespace UGF.Update.Runtime
 {
-    /// <summary>
-    /// Represents update group with the specified update collection and collection of the subgroup.
-    /// </summary>
-    /// <remarks>
-    /// This update group stores and updates subgroup in an ordered collection.
-    ///
-    /// All subgroups stored by the group name which must be unique.
-    /// </remarks>
     public class UpdateGroup : IUpdateGroup
     {
-        public string Name { get; }
         public bool Enable { get; set; } = true;
         public IUpdateCollection Collection { get; }
-        public IReadOnlyList<IUpdateGroup> SubGroups { get; }
+        public IUpdateCollection<IUpdateGroup> SubGroups { get; }
 
-        private readonly List<IUpdateGroup> m_subGroups = new List<IUpdateGroup>();
-        private readonly Dictionary<string, IUpdateGroup> m_subGroupsByName = new Dictionary<string, IUpdateGroup>();
         private bool m_updating;
         private ProfilerMarker m_marker;
 
-        /// <summary>
-        /// Creates update group with the specified name and update collection.
-        /// </summary>
-        /// <param name="name">The name of the group.</param>
-        /// <param name="collection">The update collection.</param>
-        public UpdateGroup(string name, IUpdateCollection collection)
+        public UpdateGroup(IUpdateCollection collection) : this(collection, new UpdateListHandler<IUpdateGroup>(item => item.Update()))
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+        }
 
-            Name = name;
+        public UpdateGroup(IUpdateCollection collection, IUpdateCollection<IUpdateGroup> subGroups)
+        {
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));
-            SubGroups = new ReadOnlyCollection<IUpdateGroup>(m_subGroups);
+            SubGroups = subGroups ?? throw new ArgumentNullException(nameof(subGroups));
 
 #if ENABLE_PROFILER
-            m_marker = new ProfilerMarker($"{GetType()} ({Name})");
+            m_marker = new ProfilerMarker($"{GetType()}");
 #else
             m_marker = default;
 #endif
-        }
-
-        /// <summary>
-        /// Inserts the specified group at the specified index.
-        /// </summary>
-        /// <remarks>
-        /// The name of the group must be unique.
-        /// </remarks>
-        /// <param name="group">The group to insert.</param>
-        /// <param name="index">The index to insert at.</param>
-        public void Insert(IUpdateGroup group, int index)
-        {
-            if (group == null) throw new ArgumentNullException(nameof(group));
-            if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
-            if (index < 0 || index > m_subGroups.Count) throw new ArgumentOutOfRangeException(nameof(index));
-            if (m_subGroupsByName.ContainsKey(group.Name)) throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
-
-            m_subGroups.Insert(index, group);
-            m_subGroupsByName.Add(group.Name, group);
-        }
-
-        public void Add(IUpdateGroup group)
-        {
-            if (group == null) throw new ArgumentNullException(nameof(group));
-            if (group == this) throw new ArgumentException("Update group cannot contains itself.", nameof(group));
-            if (m_subGroupsByName.ContainsKey(group.Name)) throw new ArgumentException($"A group with the same name already exists: '{group.Name}'.", nameof(group));
-
-            m_subGroups.Add(group);
-            m_subGroupsByName.Add(group.Name, group);
-        }
-
-        public void Remove(IUpdateGroup group)
-        {
-            if (group == null) throw new ArgumentNullException(nameof(group));
-
-            if (m_subGroupsByName.Remove(group.Name))
-            {
-                m_subGroups.Remove(group);
-            }
-        }
-
-        /// <summary>
-        /// Removes subgroup by the specified name.
-        /// </summary>
-        /// <param name="groupName">The name of the group to remove.</param>
-        public void Remove(string groupName)
-        {
-            if (string.IsNullOrEmpty(groupName)) throw new ArgumentException("Value cannot be null or empty.", nameof(groupName));
-
-            if (m_subGroupsByName.TryGetValue(groupName, out IUpdateGroup group))
-            {
-                m_subGroupsByName.Remove(groupName);
-                m_subGroups.Remove(group);
-            }
         }
 
         public void Update()
@@ -108,54 +37,15 @@ namespace UGF.Update.Runtime
                 m_marker.Begin();
                 m_updating = true;
 
-                Collection.ApplyQueueAndUpdate();
+                Collection.ApplyQueue();
+                SubGroups.ApplyQueue();
 
-                for (int i = 0; i < m_subGroups.Count; i++)
-                {
-                    m_subGroups[i].Update();
-                }
+                Collection.Update();
+                SubGroups.Update();
 
                 m_updating = false;
                 m_marker.End();
             }
-        }
-
-        public T GetSubGroup<T>(string name) where T : IUpdateGroup
-        {
-            return (T)GetSubGroup(name);
-        }
-
-        public IUpdateGroup GetSubGroup(string name)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-
-            return m_subGroupsByName.TryGetValue(name, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified name: '{name}'.");
-        }
-
-        public bool TryGetSubGroup<T>(string name, out T group) where T : IUpdateGroup
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-
-            if (m_subGroupsByName.TryGetValue(name, out IUpdateGroup value))
-            {
-                group = (T)value;
-                return true;
-            }
-
-            group = default;
-            return false;
-        }
-
-        public bool TryGetSubGroup(string name, out IUpdateGroup group)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-
-            return m_subGroupsByName.TryGetValue(name, out group);
-        }
-
-        public List<IUpdateGroup>.Enumerator GetEnumerator()
-        {
-            return m_subGroups.GetEnumerator();
         }
     }
 }
