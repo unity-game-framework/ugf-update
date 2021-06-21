@@ -3,7 +3,7 @@ using Unity.Profiling;
 
 namespace UGF.Update.Runtime
 {
-    public class UpdateGroup : IUpdateGroup
+    public class UpdateGroup : IUpdateGroup, IUpdateHandler
     {
         public bool Enable { get; set; } = true;
         public IUpdateCollection Collection { get; }
@@ -46,6 +46,11 @@ namespace UGF.Update.Runtime
                 m_updating = false;
                 m_marker.End();
             }
+        }
+
+        void IUpdateHandler.OnUpdate()
+        {
+            Update();
         }
     }
 }
