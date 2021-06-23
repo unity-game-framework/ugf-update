@@ -116,7 +116,7 @@ namespace UGF.Update.Runtime
             }
             else
             {
-                throw new AggregateException($"Removing update function failed by the specified system type: '{systemType}'.");
+                throw new ArgumentException($"Removing update function failed by the specified system type: '{systemType}'.");
             }
         }
 
