@@ -37,14 +37,19 @@ namespace UGF.Update.Runtime
                 m_marker.Begin();
                 m_updating = true;
 
-                Collection.ApplyQueue();
-                SubGroups.ApplyQueue();
+                try
+                {
+                    Collection.ApplyQueue();
+                    SubGroups.ApplyQueue();
 
-                Collection.Update();
-                SubGroups.Update();
-
-                m_updating = false;
-                m_marker.End();
+                    Collection.Update();
+                    SubGroups.Update();
+                }
+                finally
+                {
+                    m_updating = false;
+                    m_marker.End();
+                }
             }
         }
 
