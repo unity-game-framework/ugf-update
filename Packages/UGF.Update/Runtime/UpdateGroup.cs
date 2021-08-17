@@ -39,11 +39,7 @@ namespace UGF.Update.Runtime
 
                 try
                 {
-                    Collection.ApplyQueue();
-                    SubGroups.ApplyQueue();
-
-                    Collection.Update();
-                    SubGroups.Update();
+                    OnUpdate();
                 }
                 finally
                 {
@@ -51,6 +47,15 @@ namespace UGF.Update.Runtime
                     m_marker.End();
                 }
             }
+        }
+
+        protected virtual void OnUpdate()
+        {
+            Collection.ApplyQueue();
+            SubGroups.ApplyQueue();
+
+            Collection.Update();
+            SubGroups.Update();
         }
 
         void IUpdateHandler.OnUpdate()
