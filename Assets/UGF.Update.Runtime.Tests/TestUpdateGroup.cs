@@ -27,6 +27,14 @@ namespace UGF.Update.Runtime.Tests
             }
         }
 
+        private class Target2 : IUpdateHandler
+        {
+            public void OnUpdate()
+            {
+                throw new Exception("Target 2 Exception");
+            }
+        }
+
         [Test]
         public void Update()
         {
@@ -72,6 +80,17 @@ namespace UGF.Update.Runtime.Tests
             group.Collection.Add(group);
 
             Assert.Throws<InvalidOperationException>(() => group.Update());
+        }
+
+        [Test]
+        public void UpdateWithException()
+        {
+            var group = new UpdateGroup<Target2>(new UpdateList<Target2>());
+
+            group.Collection.Add(new Target2());
+
+            Assert.Throws<Exception>(() => group.Update(), "Target 2 Exception");
+            Assert.Throws<Exception>(() => group.Update(), "Target 2 Exception");
         }
     }
 }
