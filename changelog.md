@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0-preview.3](https://github.com/unity-game-framework/ugf-update/releases/tag/6.0.0-preview.3) - 2021-08-17  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/16?closed=1)  
+    
+
+### Changed
+
+- Change update group to catch exceptions inside update method ([#50](https://github.com/unity-game-framework/ugf-update/pull/50))  
+    - Change `UpdateGroup.Update` method to catch exception from objects from collection make them repeat each update.
+
 ## [6.0.0-preview.2](https://github.com/unity-game-framework/ugf-update/releases/tag/6.0.0-preview.2) - 2021-06-23  
 
 ### Release Notes
