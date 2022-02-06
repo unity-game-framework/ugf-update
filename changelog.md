@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0](https://github.com/unity-game-framework/ugf-update/releases/tag/6.0.0) - 2022-02-06  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-update/milestone/18?closed=1)  
+    
+
+### Changed
+
+- Update to latest Unity version ([#53](https://github.com/unity-game-framework/ugf-update/issues/53))  
+    - Update dependencies: `com.ugf.runtimetools` to `2.5.0` version.
+    - Update package _Unity_ version to `2021.2`.
+    - Update package _API Compatibility_ to `.NET Standard 2.1`.
+
 ## [6.0.0-preview.4](https://github.com/unity-game-framework/ugf-update/releases/tag/6.0.0-preview.4) - 2021-08-17  
 
 ### Release Notes

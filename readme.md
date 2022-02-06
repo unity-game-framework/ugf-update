@@ -2,15 +2,15 @@
 
 UGF.Update
 
-## Info
+## Information
 
-- **Version**: `6.0.0-preview.4`
-- **Unity**: `2021.1`
-- **API Compatibility Level**: `.NET Standard 2.0`
+- **Version**: `6.0.0`
+- **Unity**: `2021.2`
+- **API Compatibility Level**: `.NET Standard 2.1`
 
 ### Dependencies
 
-- `com.ugf.runtimetools`: `2.0.0`
+- `com.ugf.runtimetools`: `2.5.0`
 
 
 ### Description
