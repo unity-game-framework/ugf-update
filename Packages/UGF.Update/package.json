@@ -2,8 +2,8 @@
   "name": "com.ugf.update",
   "displayName": "UGF.Update",
   "version": "6.0.0-preview.4",
-  "unity": "2021.1",
-  "apiCompatibility": ".NET Standard 2.0",
+  "unity": "2021.2",
+  "apiCompatibility": ".NET Standard 2.1",
   "description": "Provides utilities to work with PlayerLoop and manage update loop.",
   "author": {
     "name": "Unity Game Framework",
@@ -19,6 +19,6 @@
     "registry": "https://unitygameframework.jfrog.io/artifactory/api/npm/default"
   },
   "dependencies": {
-    "com.ugf.runtimetools": "2.0.0"
+    "com.ugf.runtimetools": "2.5.0"
   }
 }
